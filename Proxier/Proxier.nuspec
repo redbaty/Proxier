@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>MaterialForms</id>
+        <id>Proxier</id>
         <version>$version$</version>
-        <title>WPF Material Forms</title>
+        <title>A class proxier</title>
         <authors>Edon Gashi</authors>
         <owners>Edon Gashi</owners>
-        <licenseUrl>https://github.com/EdonGashi/WpfMaterialForms/blob/master/License.md</licenseUrl>
-        <projectUrl>https://github.com/EdonGashi/WpfMaterialForms</projectUrl>
+        <licenseUrl>https://github.com/redbaty/Proxier/blob/master/License.md</licenseUrl>
+        <projectUrl>https://github.com/redbaty/Proxier</projectUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <description>Dynamically generated forms and dialogs in WPF</description>
+        <description>Creates and inject attributes and properties to existing types in runtime</description>
         <tags>Material Design Form Dialog WPF XAML</tags>
-</metadata>
-  <files>
-    <file src=".\bin\Release\*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*;*.db"/>
-    <file src=".\bin\Release\**\*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*;*.db"/>
-  </files>
+    </metadata>
 </package>
