@@ -20,9 +20,6 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AttributeBuilder.Standard\AttributeBuilder.Standard.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\..\Fody\Fody\bin\Debug\net46\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
@@ -32,5 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Proxier" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AttributeBuilder.Standard\AttributeBuilder.Standard.csproj" />
   </ItemGroup>
 </Project>

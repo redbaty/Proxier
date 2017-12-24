@@ -101,6 +101,16 @@ namespace Proxier.Mappers
             return mapper.Mappings.Where(i => i.PropertyInfo == null).Aggregate(type,
                 (current, expression) => current.InjectClassAttributes(expression.Expression));
         }
+        
+        /// <summary>
+        /// Gets if type has a parameterless constructor
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool HasParameterlessContructor(this Type type)
+        {
+            return type.GetConstructor(Type.EmptyTypes) != null;
+        }
 
         /// <summary>
         ///     Adds a parameterless constructor.
