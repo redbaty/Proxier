@@ -84,7 +84,7 @@ namespace Proxier.Mappers
             return TransfomSpawn(Activator.CreateInstance(BaseType.GetInjectedType().AddParameterlessConstructor()));
         }
 
-        internal virtual void HandleAction(object model, string action, object parameter)
+        public virtual void HandleAction(object model, string action, object parameter)
         {
         }
 
@@ -136,7 +136,7 @@ namespace Proxier.Mappers
         /// <param name="model">The model.</param>
         /// <param name="action">The action.</param>
         /// <param name="parameter">The parameter.</param>
-        internal override void HandleAction(object model, string action, object parameter)
+        public override void HandleAction(object model, string action, object parameter)
         {
             Action((TSource) model.CopyTo(Activator.CreateInstance(Type.AddParameterlessConstructor())), action,
                 parameter);
