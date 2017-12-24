@@ -66,7 +66,7 @@ namespace Proxier.Mappers
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(i =>
                 i.IsClass && !i.ContainsGenericParameters && i.IsSubclassOf(typeof(T))).ToList();
 
-            var mappers = types.Select(i => kernel?.Get(i) ?? Activator.CreateInstance(i)).OfType<T>()
+            var mappers = types.Select(i => i.AddParameterlessConstructor()).Select(i => kernel?.Get(i) ?? Activator.CreateInstance(i)).OfType<T>()
                 .ToList();
 
             foreach (var type in mappers)
