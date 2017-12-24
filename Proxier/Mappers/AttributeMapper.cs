@@ -9,23 +9,23 @@ namespace Proxier.Mappers
     /// <summary>
     ///     Mapper abstraction
     /// </summary>
-    public class AttributesMapper
+    public class AttributeMapper
     {
         /// <inheritdoc />
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Proxier.Mappers.AttributesMapper" /> class.
+        ///     Initializes a new instance of the <see cref="T:Proxier.Mappers.AttributeMapper" /> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        public AttributesMapper(Type type) : this()
+        public AttributeMapper(Type type) : this()
         {
             BaseType = type;
             Type = type;
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="AttributesMapper" /> class.
+        ///     Initializes a new instance of the <see cref="AttributeMapper" /> class.
         /// </summary>
-        public AttributesMapper()
+        public AttributeMapper()
         {
             Parent = this;
         }
@@ -49,7 +49,7 @@ namespace Proxier.Mappers
         /// <value>
         ///     The parent.
         /// </value>
-        public AttributesMapper Parent { get; set; }
+        public AttributeMapper Parent { get; set; }
 
         /// <summary>
         ///     Gets or sets the injected type.
@@ -84,10 +84,6 @@ namespace Proxier.Mappers
             return TransfomSpawn(Activator.CreateInstance(BaseType.GetInjectedType().AddParameterlessConstructor()));
         }
 
-        public virtual void HandleAction(object model, string action, object parameter)
-        {
-        }
-
         /// <summary>
         ///     Transfoms the spawn method.
         /// </summary>
@@ -107,39 +103,18 @@ namespace Proxier.Mappers
         }
     }
 
+    /// <inheritdoc />
     /// <summary>
     ///     Mapper abstractions
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
-    public class AttributesMapper<TSource> : AttributesMapper
+    public class AttributeMapper<TSource> : AttributeMapper
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="AttributesMapper{TSource}" /> class.
+        ///     Initializes a new instance of the <see cref="AttributeMapper{TSource}" /> class.
         /// </summary>
-        public AttributesMapper() : base(typeof(TSource))
+        public AttributeMapper() : base(typeof(TSource))
         {
-        }
-
-        /// <summary>
-        ///     Called when [action happened]
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <param name="action">The action.</param>
-        /// <param name="parameter">The parameter.</param>
-        public virtual void Action(TSource model, string action, object parameter)
-        {
-        }
-
-        /// <summary>
-        ///     Handles the action.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <param name="action">The action.</param>
-        /// <param name="parameter">The parameter.</param>
-        public override void HandleAction(object model, string action, object parameter)
-        {
-            Action((TSource) model.CopyTo(Activator.CreateInstance(Type.AddParameterlessConstructor())), action,
-                parameter);
         }
 
         /// <summary>

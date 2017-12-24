@@ -50,22 +50,30 @@ namespace Proxier.Mappers
             if (!Mapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
             return (T) obj.CopyTo(Mapper.TypesOverrides[obj.GetType()].Spawn());
         }
+        
+        /// <summary>
+        ///     Finds a parent mapper from a type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
+        public static T FindOverridableType<T>(this Type type) where T: AttributeMapper
+        {
+            if (Mapper.TypesOverrides.ContainsKey(type))
+                return (T) Mapper.TypesOverrides[type];
+
+            var injType = type.GetAllBaseTypes()
+                .FirstOrDefault(allBaseType => Mapper.TypesOverrides.ContainsKey(allBaseType));
+
+            return (T) (injType != null ? Mapper.TypesOverrides[injType] : null);
+        }
 
         /// <summary>
         ///     Finds a parent mapper from a type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static AttributesMapper FindOverridableType(this Type type)
-        {
-            if (Mapper.TypesOverrides.ContainsKey(type))
-                return Mapper.TypesOverrides[type];
-
-            var injType = type.GetAllBaseTypes()
-                .FirstOrDefault(allBaseType => Mapper.TypesOverrides.ContainsKey(allBaseType));
-
-            return injType != null ? Mapper.TypesOverrides[injType] : null;
-        }
+        public static AttributeMapper FindOverridableType(this Type type) 
+            => FindOverridableType<AttributeMapper>(type);
 
         /// <summary>
         ///     Gets the injected version of a type

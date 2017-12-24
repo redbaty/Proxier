@@ -23,7 +23,7 @@ namespace Proxier.Mappers
         /// </summary>
         /// <param name="parent">The parent.</param>
         /// <exception cref="ArgumentNullException">parent</exception>
-        public Mapper(AttributesMapper parent)
+        public Mapper(AttributeMapper parent)
         {
             Parent = parent ?? throw new ArgumentNullException(nameof(parent));
         }
@@ -31,8 +31,8 @@ namespace Proxier.Mappers
         /// <summary>
         ///     Global mapping overrides
         /// </summary>
-        public static Dictionary<Type, AttributesMapper> TypesOverrides { get; set; } =
-            new Dictionary<Type, AttributesMapper>();
+        public static Dictionary<Type, AttributeMapper> TypesOverrides { get; set; } =
+            new Dictionary<Type, AttributeMapper>();
 
         /// <summary>
         ///     This mapper attribute expression
@@ -50,20 +50,23 @@ namespace Proxier.Mappers
         /// <value>
         ///     The parent.
         /// </value>
-        public AttributesMapper Parent { get; set; }
+        public AttributeMapper Parent { get; set; }
 
+        public static void InitializeIMapperClasses(IKernel kernel = null) =>
+            InitializeIMapperClasses<AttributeMapper>(kernel);
+        
         /// <summary>
         ///     Initializes the mapper classes.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        public static void InitializeIMapperClasses(IKernel kernel = null)
+        public static void InitializeIMapperClasses<T>(IKernel kernel = null) where T: AttributeMapper
         {
             TypesOverrides.Clear();
 
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(i =>
-                i.IsClass && !i.ContainsGenericParameters && i.IsSubclassOf(typeof(AttributesMapper))).ToList();
+                i.IsClass && !i.ContainsGenericParameters && i.IsSubclassOf(typeof(T))).ToList();
 
-            var mappers = types.Select(i => kernel?.Get(i) ?? Activator.CreateInstance(i)).OfType<AttributesMapper>()
+            var mappers = types.Select(i => kernel?.Get(i) ?? Activator.CreateInstance(i)).OfType<T>()
                 .ToList();
 
             foreach (var type in mappers)
