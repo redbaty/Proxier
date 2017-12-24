@@ -9,9 +9,7 @@
     <DocumentationFile>bin\Release\netstandard2.0\Proxier.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Fody" Version="2.3.3" />
-    <PackageReference Include="ModuleInit.Fody" Version="1.7.0" />
-    <PackageReference Include="NETStandard.Library" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
@@ -19,8 +17,20 @@
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AttributeBuilder.Standard\AttributeBuilder.Standard.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\..\Fody\Fody\bin\Debug\net46\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Thread, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\..\Fody\Fody\bin\Debug\net46\System.Threading.Thread.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Proxier" />
   </ItemGroup>
 </Project>

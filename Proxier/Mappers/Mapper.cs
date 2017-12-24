@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 using Ninject;
 
@@ -12,6 +13,11 @@ namespace Proxier.Mappers
     /// </summary>
     public class Mapper
     {
+        static Mapper()
+        {
+            InitializeIMapperClasses();
+        }
+        
         /// <summary>
         ///     Initializes a new instance of the <see cref="Mapper" /> class.
         /// </summary>
