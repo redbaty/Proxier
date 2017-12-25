@@ -24,6 +24,26 @@ Then you'll create a extension class like so:
     }
 ```
 
+and then you these properties will be added to a static list with all the current extensions, you can convert the object from the "MyClass" type to the injected type by calling:
+
+```cs
+typeof(MyClass).GetInjectedType();
+```
+
+To get the injected type, or to get a injected object you can use:
+
+```cs
+var InjectedMyClassObject = MyClassObject.GetInjectedObject();
+```
+
+Note that you can convert the inject object back to the original type by calling
+
+```cs
+InjectedMyClassObject.CopyTo(MyClassObject);
+```
+
+and all the common properties will be overriden by the ones on the injected type.
+
 ## Built With :wrench:
 
 * [AttributeBuilder](https://github.com/michielvoo/Attribute-Builder) - Used to generate attributes, converted to .NET Standard
