@@ -101,7 +101,7 @@ namespace Proxier.Mappers
         public virtual void OnKernelLoaded()
         {
         }
-        
+
         /// <summary>
         ///     Add an attribute to a class.
         /// </summary>
@@ -116,7 +116,7 @@ namespace Proxier.Mappers
 
             Mappings.Add(mapper);
         }
-        
+
         /// <summary>
         ///     Adds a mapper by name.
         /// </summary>
@@ -124,7 +124,7 @@ namespace Proxier.Mappers
         {
             Type = Type.InjectProperty(prop, type);
         }
-        
+
         /// <summary>
         ///     Adds a mapper by name.
         /// </summary>

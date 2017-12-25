@@ -82,6 +82,7 @@ namespace Proxier.Mappers
                     type.Kernel = kernel;
                     type.OnKernelLoaded();
                 }
+
                 TypesOverrides.Add(type.BaseType, type);
             }
         }
