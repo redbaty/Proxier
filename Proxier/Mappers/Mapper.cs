@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net;
 using System.Reflection;
 using Ninject;
 
@@ -15,9 +14,9 @@ namespace Proxier.Mappers
     {
         static Mapper()
         {
-            InitializeIMapperClasses();
+            InitializeMapperClasses();
         }
-        
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Mapper" /> class.
         /// </summary>
@@ -31,7 +30,7 @@ namespace Proxier.Mappers
         /// <summary>
         ///     Global mapping overrides
         /// </summary>
-        public static Dictionary<Type, AttributeMapper> TypesOverrides { get; set; } =
+        public static Dictionary<Type, AttributeMapper> TypesOverrides { get; } =
             new Dictionary<Type, AttributeMapper>();
 
         /// <summary>
@@ -50,23 +49,30 @@ namespace Proxier.Mappers
         /// <value>
         ///     The parent.
         /// </value>
-        public AttributeMapper Parent { get; set; }
+        public AttributeMapper Parent { get; }
 
-        public static void InitializeIMapperClasses(IKernel kernel = null) =>
-            InitializeIMapperClasses<AttributeMapper>(kernel);
-        
         /// <summary>
-        ///     Initializes the mapper classes.
+        ///     Initializes the mapper classes (AttributeMapper).
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        public static void InitializeIMapperClasses<T>(IKernel kernel = null) where T: AttributeMapper
+        public static void InitializeMapperClasses(IKernel kernel = null)
+        {
+            InitializeMapperClasses<AttributeMapper>(kernel);
+        }
+
+        /// <summary>
+        ///     Initializes the mapper classes from a certain type.
+        /// </summary>
+        /// <param name="kernel">The kernel.</param>
+        public static void InitializeMapperClasses<T>(IKernel kernel = null) where T : AttributeMapper
         {
             TypesOverrides.Clear();
 
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(i =>
                 i.IsClass && !i.ContainsGenericParameters && i.IsSubclassOf(typeof(T))).ToList();
 
-            var mappers = types.Where(i => i.HasParameterlessContructor()).Select(i => kernel?.Get(i) ?? Activator.CreateInstance(i)).OfType<T>()
+            var mappers = types.Where(i => i.HasParameterlessContructor())
+                .Select(i => kernel?.Get(i) ?? Activator.CreateInstance(i)).OfType<T>()
                 .ToList();
 
             foreach (var type in mappers)

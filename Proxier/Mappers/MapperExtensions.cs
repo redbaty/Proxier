@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using AttributeBuilder;
 using AttributeBuilder.Standard;
 
 namespace Proxier.Mappers
@@ -50,13 +49,13 @@ namespace Proxier.Mappers
             if (!Mapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
             return (T) obj.CopyTo(Mapper.TypesOverrides[obj.GetType()].Spawn());
         }
-        
+
         /// <summary>
         ///     Finds a parent mapper from a type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static T FindOverridableType<T>(this Type type) where T: AttributeMapper
+        public static T FindOverridableType<T>(this Type type) where T : AttributeMapper
         {
             if (Mapper.TypesOverrides.ContainsKey(type))
                 return (T) Mapper.TypesOverrides[type];
@@ -72,8 +71,10 @@ namespace Proxier.Mappers
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static AttributeMapper FindOverridableType(this Type type) 
-            => FindOverridableType<AttributeMapper>(type);
+        public static AttributeMapper FindOverridableType(this Type type)
+        {
+            return FindOverridableType<AttributeMapper>(type);
+        }
 
         /// <summary>
         ///     Gets the injected version of a type
@@ -101,9 +102,9 @@ namespace Proxier.Mappers
             return mapper.Mappings.Where(i => i.PropertyInfo == null).Aggregate(type,
                 (current, expression) => current.InjectClassAttributes(expression.Expression));
         }
-        
+
         /// <summary>
-        /// Gets if type has a parameterless constructor
+        ///     Gets if type has a parameterless constructor
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -136,6 +137,10 @@ namespace Proxier.Mappers
             return typeBuilder.CreateTypeInfo().AsType();
         }
 
+        /// <summary>
+        ///     Generate a module builder.
+        /// </summary>
+        /// <returns></returns>
         private static ModuleBuilder ModuleBuilder()
         {
             var assemblyBuilder =

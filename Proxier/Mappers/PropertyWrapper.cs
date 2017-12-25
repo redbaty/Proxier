@@ -5,7 +5,7 @@ namespace Proxier.Mappers
     /// <summary>
     ///     PropertyInfo wrapper maintaining the token.
     /// </summary>
-    public class PropertyTokenFix
+    public class PropertyWrapper
     {
         /// <summary>
         ///     The propertyInfo.

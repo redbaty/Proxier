@@ -27,6 +27,7 @@ namespace Proxier.Mappers
                     return property;
                 type = type.BaseType;
             }
+
             return null;
         }
 
@@ -46,10 +47,10 @@ namespace Proxier.Mappers
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static IEnumerable<PropertyTokenFix> GetHighestProperties(this Type type)
+        public static IEnumerable<PropertyWrapper> GetHighestProperties(this Type type)
         {
             return type.GetProperties(BindingFlags.Public | BindingFlags.Instance).GroupBy(i => i.Name)
-                .Select(i => new PropertyTokenFix {PropertyInfo = i.First(), Token = i.Last().MetadataToken});
+                .Select(i => new PropertyWrapper {PropertyInfo = i.First(), Token = i.Last().MetadataToken});
         }
     }
 }

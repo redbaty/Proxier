@@ -101,22 +101,7 @@ namespace Proxier.Mappers
         public virtual void OnKernelLoaded()
         {
         }
-    }
-
-    /// <inheritdoc />
-    /// <summary>
-    ///     Mapper abstractions
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    public class AttributeMapper<TSource> : AttributeMapper
-    {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="AttributeMapper{TSource}" /> class.
-        /// </summary>
-        public AttributeMapper() : base(typeof(TSource))
-        {
-        }
-
+        
         /// <summary>
         ///     Add an attribute to a class.
         /// </summary>
@@ -131,7 +116,7 @@ namespace Proxier.Mappers
 
             Mappings.Add(mapper);
         }
-
+        
         /// <summary>
         ///     Adds a mapper by name.
         /// </summary>
@@ -139,7 +124,7 @@ namespace Proxier.Mappers
         {
             Type = Type.InjectProperty(prop, type);
         }
-
+        
         /// <summary>
         ///     Adds a mapper by name.
         /// </summary>
@@ -151,6 +136,21 @@ namespace Proxier.Mappers
                 Expression = expression,
                 PropertyInfo = Type.GetHighestProperty(prop)
             });
+        }
+    }
+
+    /// <inheritdoc />
+    /// <summary>
+    ///     Mapper abstractions
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    public class AttributeMapper<TSource> : AttributeMapper
+    {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AttributeMapper{TSource}" /> class.
+        /// </summary>
+        public AttributeMapper() : base(typeof(TSource))
+        {
         }
 
         /// <summary>
