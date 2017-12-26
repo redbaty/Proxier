@@ -52,6 +52,6 @@ and all the common properties will be overriden by the ones on the injected type
 
 ## License :books:
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
 
 *This documentation is incomplete and may change overtime.*
