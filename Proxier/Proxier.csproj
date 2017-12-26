@@ -38,9 +38,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Proxier" />
+    <ProjectReference Include="..\AttributeBuilder.Standard\AttributeBuilder.Standard.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AttributeBuilder.Standard\AttributeBuilder.Standard.csproj" />
+    <Compile Remove="Proxier\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Proxier\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Proxier\**" />
   </ItemGroup>
 </Project>
