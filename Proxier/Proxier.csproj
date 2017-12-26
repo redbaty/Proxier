@@ -2,6 +2,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Marcos Maia</Authors>
+    <Company>Marcos Maia</Company>
+    <Description>Creates and inject attributes and properties to existing types in runtime</Description>
+    <Copyright>2017/2018</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/redbaty/Proxier/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/redbaty/Proxier</PackageProjectUrl>
+    <PackageTags>Class Inject Runtime Attributes Properties</PackageTags>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DocumentationFile>bin\Debug\netstandard2.0\Proxier.xml</DocumentationFile>
