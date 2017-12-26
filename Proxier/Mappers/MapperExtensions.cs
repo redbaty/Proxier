@@ -63,7 +63,14 @@ namespace Proxier.Mappers
             var injType = type.GetAllBaseTypes()
                 .FirstOrDefault(allBaseType => Mapper.TypesOverrides.ContainsKey(allBaseType));
 
-            return (T) (injType != null ? Mapper.TypesOverrides[injType] : null);
+            try
+            {
+                return (T) (injType != null ? Mapper.TypesOverrides[injType] : null);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
