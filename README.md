@@ -6,6 +6,12 @@
 
 Have you ever had a class that is generated at build but you need to add attributes to it? This is the solution! You can add attributes and even properties to classes at runtime by defining an extension class!
 
+## Features
+
+* 🐱‍👤 Out of the box support for Ninject!
+* 🕛 0 configuration time, **just start using**.
+* :information_source: Semantic extensions, easy to use.
+
 ## Code Samples :pencil2:
 
 Say that you are using NSwag to generate swagger based classes, but they change a lot and you are worried that you forget to add some attributes to it and decide to use this library:
