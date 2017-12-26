@@ -46,6 +46,9 @@ namespace Proxier.Mappers
         /// <returns></returns>
         public static T GetInjectedObject<T>(this T obj) where T : class
         {
+            if (obj == null)
+                return null;
+            
             if (!Mapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
             return (T) obj.CopyTo(Mapper.TypesOverrides[obj.GetType()].Spawn());
         }
