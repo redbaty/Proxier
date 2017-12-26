@@ -4,8 +4,8 @@
         <id>Proxier</id>
         <version>$version$</version>
         <title>A class proxier</title>
-        <authors>Edon Gashi</authors>
-        <owners>Edon Gashi</owners>
+        <authors>Marcos Maia</authors>
+        <owners>Marcos Maia</owners>
         <licenseUrl>https://github.com/redbaty/Proxier/blob/master/License.md</licenseUrl>
         <projectUrl>https://github.com/redbaty/Proxier</projectUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
