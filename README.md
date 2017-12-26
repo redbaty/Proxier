@@ -9,7 +9,7 @@ Have you ever had a class that is generated at build but you need to add attribu
 ## Features
 
 * 🐱‍👤 Out of the box support for Ninject!
-* 🕛 0 configuration time required, just start using.
+* 🕛 0 configuration time, **just start using**.
 * :information_source: Semantic extensions, easy to use.
 
 ## Code Samples :pencil2:
