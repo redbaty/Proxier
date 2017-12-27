@@ -4,7 +4,7 @@
 
 ## Introduction :information_source:
 
-Have you ever had a class that is generated at build but you need to add attributes to it? This is the solution! You can add attributes and even properties to classes at runtime by defining an extension class!
+Have you ever had a class that is generated during the build process or at runtime but you need to add attributes to it? This is the solution! You can add attributes and even properties to classes at runtime by defining an extension class!
 
 ## Features
 
