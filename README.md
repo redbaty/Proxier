@@ -1,10 +1,10 @@
 # Proxier
 
-[![GitHub license](https://img.shields.io/github/license/redbaty/Proxier.svg)](https://github.com/redbaty/Proxier/blob/master/LICENSE) [![Twitter](https://img.shields.io/twitter/url/https/github.com/redbaty/Proxier.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fredbaty%2FProxier) [![NuGet](https://img.shields.io/nuget/dt/Proxier.svg)](https://www.nuget.org/packages/Proxier/) [![VSTS](https://redbaty-ci-builds.visualstudio.com/_apis/public/build/definitions/f59de2e3-c972-498b-9cac-f0c489a7fef1/4/badge)]()
+[![GitHub license](https://img.shields.io/github/license/redbaty/Proxier.svg)](https://github.com/redbaty/Proxier/blob/master/LICENSE) [![Twitter](https://img.shields.io/twitter/url/https/github.com/redbaty/Proxier.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fredbaty%2FProxier) [![NuGet](https://img.shields.io/nuget/dt/Proxier.svg)](https://www.nuget.org/packages/Proxier/) [![Build status](https://ci.appveyor.com/api/projects/status/3v3da0um3oy8ul5k?svg=true)](https://ci.appveyor.com/project/redbaty/proxier)
 
 ## Introduction :information_source:
 
-Have you ever had a class that is generated at build but you need to add attributes to it? This is the solution! You can add attributes and even properties to classes at runtime by defining an extension class!
+Have you ever had a class that is generated during the build process or at runtime but you need to add attributes to it? This is the solution! You can add attributes and even properties to classes at runtime by defining an extension class!
 
 ## Features
 
