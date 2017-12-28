@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AttributeBuilder.Standard</id>
-        <version>1.0.0</version>
+        <version>$version$</version>
         <title>AttributeBuilder but in .net standard</title>
         <authors>Edon Gashi</authors>
         <owners>Edon Gashi</owners>
