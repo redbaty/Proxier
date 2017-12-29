@@ -52,6 +52,16 @@ InjectedMyClassObject.CopyTo(MyClassObject);
 
 and all the common properties will be overriden by the ones on the injected type.
 
+#### Dependency Injection
+
+You can pass a Kernel to the Mapper initializer like this:
+
+```cs
+Mapper.InitializeMapperClasses(MyNinjectKernel);
+```
+
+and use the default `[Inject]` attribute from Ninject to get properties inside the extension class which in turn can add those into its current extended type. 
+
 ## Built With :wrench:
 
 * [AttributeBuilder](https://github.com/michielvoo/Attribute-Builder) - Used to generate attributes, converted to .NET Standard
