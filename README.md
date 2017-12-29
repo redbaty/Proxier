@@ -16,7 +16,7 @@ Have you ever had a class that is generated during the build process or at runti
 
 Say that you are using NSwag to generate swagger based classes, but they change a lot and you are worried that you forget to add some attributes to it and decide to use this library:
 
-First you install the NuGet package
+First you'll install the NuGet package
 > Install-Package Proxier
 
 Then you'll create a extension class like so:
@@ -32,13 +32,13 @@ Then you'll create a extension class like so:
     }
 ```
 
-and then you these properties will be added to a static list with all the current extensions, you can convert the object from the "MyClass" type to the injected type by calling:
+and then these properties will be added to a static mapper list, the `Mapper.TypesOverrides` with all the current extensions. To convert a object from the "MyClass" **type** to the injected type you would call:
 
 ```cs
 typeof(MyClass).GetInjectedType();
 ```
 
-To get the injected type, or to get a injected object you can use:
+To get a injected **object** you can use:
 
 ```cs
 var InjectedMyClassObject = MyClassObject.GetInjectedObject();
