@@ -66,7 +66,7 @@ namespace Proxier.Mappers
         /// <param name="kernel">The kernel.</param>
         public static void InitializeMapperClasses<T>(IKernel kernel = null) where T : AttributeMapper
         {
-            if (TypesOverrides.Count > 0)
+            if (TypesOverrides.Count > 0 && kernel != null)
             {
                 foreach (var @override in TypesOverrides.Where(i => i.Value.Kernel != kernel))
                 {
