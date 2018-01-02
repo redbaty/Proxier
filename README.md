@@ -11,6 +11,7 @@ Have you ever had a class that is generated during the build process or at runti
 * 🐱‍👤 Out of the box support for Ninject!
 * 🕛 0 configuration time, **just start using**.
 * :information_source: Semantic extensions, easy to use.
+* .NET Core support
 
 ## Code Samples :pencil2:
 
