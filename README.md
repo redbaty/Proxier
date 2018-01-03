@@ -1,6 +1,12 @@
-# Proxier
-
+<div align="center">
+  <a href="https://github.com/MahApps/MahApps.Metro">
+    <img alt="MahApps.Metro" width="200" heigth="200" src="https://image.flaticon.com/icons/svg/51/51650.svg">
+  </a>
+  <h1>Proxier</h1>
+    
 [![GitHub license](https://img.shields.io/github/license/redbaty/Proxier.svg)](https://github.com/redbaty/Proxier/blob/master/LICENSE) [![Twitter](https://img.shields.io/twitter/url/https/github.com/redbaty/Proxier.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fredbaty%2FProxier) [![NuGet](https://img.shields.io/nuget/dt/Proxier.svg)](https://www.nuget.org/packages/Proxier/) [![Build status](https://ci.appveyor.com/api/projects/status/3v3da0um3oy8ul5k?svg=true)](https://ci.appveyor.com/project/redbaty/proxier)
+</div>
+
 
 ## Introduction :information_source:
 
