@@ -87,6 +87,16 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
+        /// Gets all the properties values, the key being its name.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static ILookup<string, object> GetPropertiesValue(this object obj)
+        {
+            return obj.GetType().GetProperties().ToLookup(property => property.Name, property => property.GetValue(obj));
+        }
+
+        /// <summary>
         ///     Gets the injected version of a type
         /// </summary>
         /// <param name="type">The type.</param>
