@@ -19,6 +19,8 @@
     <DocumentationFile>bin\Release\netstandard2.0\Proxier.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentCache" Version="4.0.0.1" />
+    <PackageReference Include="Fody" Version="2.3.14" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
     <PackageReference Include="ModuleInit.Fody" Version="1.7.0">
       <PrivateAssets>all</PrivateAssets>

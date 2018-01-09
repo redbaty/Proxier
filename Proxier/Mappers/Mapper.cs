@@ -12,11 +12,6 @@ namespace Proxier.Mappers
     /// </summary>
     public class Mapper
     {
-        static Mapper()
-        {
-            InitializeMapperClasses();
-        }
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="Mapper" /> class.
         /// </summary>
