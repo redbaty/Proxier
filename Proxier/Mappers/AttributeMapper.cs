@@ -29,12 +29,7 @@ namespace Proxier.Mappers
         {
             Parent = this;
         }
-
-        /// <summary>
-        ///     Automatically hides elements that are not defined already.
-        /// </summary>
-        public bool AutoHide { get; set; } = false;
-
+        
         /// <summary>
         ///     Gets or sets the kernel.
         /// </summary>
