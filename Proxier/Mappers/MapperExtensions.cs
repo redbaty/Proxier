@@ -13,6 +13,7 @@ namespace Proxier.Mappers
     /// </summary>
     public static class MapperExtensions
     {
+        private static ModuleBuilder _moduleBuilder;
         public const string DynamicNamespace = "Proxier";
 
         /// <summary>
@@ -175,8 +176,7 @@ namespace Proxier.Mappers
             if (constructor != null)
                 return type;
 
-            var moduleBuilder = ModuleBuilder();
-            var typeBuilder = moduleBuilder.DefineType(type.Name + ".parameterless", TypeAttributes.Public, type);
+            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".parameterless", TypeAttributes.Public, type);
 
             var constructorBuilder =
                 typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
@@ -187,11 +187,22 @@ namespace Proxier.Mappers
             return typeBuilder.CreateTypeInfo().AsType();
         }
 
+        private static ModuleBuilder ModuleBuilder
+        {
+            get
+            {
+                if (_moduleBuilder == null)
+                    _moduleBuilder = GetModuleBuilder();
+
+                return _moduleBuilder;
+            }
+        }
+
         /// <summary>
         ///     Generate a module builder.
         /// </summary>
         /// <returns></returns>
-        private static ModuleBuilder ModuleBuilder()
+        private static ModuleBuilder GetModuleBuilder()
         {
             var assemblyBuilder =
                 AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(DynamicNamespace),
@@ -212,8 +223,8 @@ namespace Proxier.Mappers
             if (!type.IsClass)
                 throw new Exception("Type is not a class, cannot inject.");
 
-            var moduleBuilder = ModuleBuilder();
-            var typeBuilder = moduleBuilder.DefineType(type.Name + ".proxied", TypeAttributes.Public, type);
+      
+            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".proxied", TypeAttributes.Public, type);
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
             if (constructor == null)
@@ -264,8 +275,7 @@ namespace Proxier.Mappers
             params Expression<Func<Attribute>>[] expressions)
         {
             type = type.AddParameterlessConstructor();
-            var moduleBuilder = ModuleBuilder();
-            var typeBuilder = moduleBuilder.DefineType(type.Name + ".proxied", TypeAttributes.Public, type);
+            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".proxied", TypeAttributes.Public, type);
             var custNamePropBldr = propInfo.Name.CreateProperty(typeBuilder, propInfo.PropertyType);
             foreach (var expression in expressions)
                 custNamePropBldr.SetCustomAttribute(expression);
@@ -282,8 +292,7 @@ namespace Proxier.Mappers
         public static Type InjectProperty(this Type type, string name, Type propertyType)
         {
             type = type.AddParameterlessConstructor();
-            var moduleBuilder = ModuleBuilder();
-            var typeBuilder = moduleBuilder.DefineType(type.Name + ".propertyInjected", TypeAttributes.Public, type);
+            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".propertyInjected", TypeAttributes.Public, type);
             name.CreateProperty(typeBuilder, propertyType);
             return typeBuilder.CreateTypeInfo().AsType();
         }
