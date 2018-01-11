@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Newtonsoft.Json;
 using Ninject;
+using Proxier.Extensions;
 
 namespace Proxier.Mappers
 {
@@ -12,6 +14,11 @@ namespace Proxier.Mappers
     /// </summary>
     public class Mapper
     {
+        static Mapper()
+        {
+            InitializeMapperClasses();
+        }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Mapper" /> class.
         /// </summary>
@@ -74,11 +81,11 @@ namespace Proxier.Mappers
 
             TypesOverrides.Clear();
 
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(i =>
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetLoadableTypes()).Where(i =>
                 i.IsClass && !i.ContainsGenericParameters && i.IsSubclassOf(typeof(T))).ToList();
 
-            var mappers = types.Where(i => i.HasParameterlessContructor())
-                .Select(i => kernel?.Get(i) ?? Activator.CreateInstance(i)).OfType<T>()
+            var mappers = types.Where(i => i.HasParameterlessContructor() && i.IsPublic)
+                .Select(Activator.CreateInstance).OfType<T>()
                 .ToList();
 
             foreach (var type in mappers)
