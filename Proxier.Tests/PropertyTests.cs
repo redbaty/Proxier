@@ -34,10 +34,7 @@ namespace Proxier.Tests
         {
             var item = new TestClass();
             
-            Assert.True(item.GetType().GetProperty(nameof(TestClass.DefaultProperty)) != null);
-
-            _output.WriteLine($"Injected Properties: {JsonConvert.SerializeObject(item.GetType().GetInjectedType().GetProperties().Select(i => i.Name), Formatting.Indented)}");
-            
+            Assert.True(item.GetType().GetProperty(nameof(TestClass.DefaultProperty)) != null);            
             Assert.True(item.GetType().GetInjectedType().GetProperty("NewProperty") != null);
         }
     }
