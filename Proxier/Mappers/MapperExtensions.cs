@@ -14,7 +14,7 @@ namespace Proxier.Mappers
     public static class MapperExtensions
     {
         public const string DynamicNamespace = "Proxier";
-        
+
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
@@ -23,6 +23,33 @@ namespace Proxier.Mappers
         /// <returns></returns>
         public static object CopyTo(this object baseClassInstance, object target)
         {
+            foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
+                try
+                {
+                    var value = propertyInfo.GetValue(baseClassInstance, null);
+                    var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
+
+                    if (null != value)
+                        highEquiv.SetValue(target, value, null);
+                }
+                catch
+                {
+                    // ignored
+                }
+
+            return target;
+        }
+
+        /// <summary>
+        ///     Copies object to another object of a type using reflection.
+        /// </summary>
+        /// <param name="baseClassInstance">The base class instance.</param>
+        /// <param name="target">The target.</param>
+        /// <returns></returns>
+        public static object CopyTo(this object baseClassInstance, Type targetType)
+        {
+            var target = Activator.CreateInstance(targetType.AddParameterlessConstructor());
+
             foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
                 try
                 {
@@ -50,7 +77,7 @@ namespace Proxier.Mappers
         {
             if (obj == null)
                 return null;
-            
+
             if (!Mapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
             return (T) obj.CopyTo(Mapper.TypesOverrides[obj.GetType()].Spawn());
         }
@@ -95,7 +122,8 @@ namespace Proxier.Mappers
         /// <returns></returns>
         public static ILookup<string, object> GetPropertiesValue(this object obj)
         {
-            return obj.GetType().GetProperties().ToLookup(property => property.Name, property => property.GetValue(obj));
+            return obj.GetType().GetProperties()
+                .ToLookup(property => property.Name, property => property.GetValue(obj));
         }
 
         /// <summary>
@@ -255,7 +283,7 @@ namespace Proxier.Mappers
         {
             type = type.AddParameterlessConstructor();
             var moduleBuilder = ModuleBuilder();
-            var typeBuilder = moduleBuilder.DefineType(type.Name +".propertyInjected", TypeAttributes.Public, type);
+            var typeBuilder = moduleBuilder.DefineType(type.Name + ".propertyInjected", TypeAttributes.Public, type);
             name.CreateProperty(typeBuilder, propertyType);
             return typeBuilder.CreateTypeInfo().AsType();
         }
