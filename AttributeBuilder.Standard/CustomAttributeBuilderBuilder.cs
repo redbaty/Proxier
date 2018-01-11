@@ -13,11 +13,11 @@ namespace AttributeBuilder.Standard
     internal class CustomAttributeBuilderBuilder
     {
         protected ConstructorInfo Constructor;
-        protected List<object> ConstructorArgs = new List<object>();
-        private readonly List<PropertyInfo> namedProperties = new List<PropertyInfo>();
-        private readonly List<object> propertyValues = new List<object>();
-        private readonly List<FieldInfo> namedFields = new List<FieldInfo>();
-        private readonly List<object> fieldValues = new List<object>();
+        protected readonly List<object> ConstructorArgs = new List<object>();
+        private readonly List<PropertyInfo> _namedProperties = new List<PropertyInfo>();
+        private readonly List<object> _propertyValues = new List<object>();
+        private readonly List<FieldInfo> _namedFields = new List<FieldInfo>();
+        private readonly List<object> _fieldValues = new List<object>();
 
         /// <summary>
         /// Creates a CustomAttributeBuilder object based on a lambda expression, 
@@ -33,8 +33,8 @@ namespace AttributeBuilder.Standard
             Process(expression);
 
             return new CustomAttributeBuilder(Constructor, ConstructorArgs.ToArray(),
-                namedProperties.ToArray(), propertyValues.ToArray(), 
-                namedFields.ToArray(), fieldValues.ToArray());
+                _namedProperties.ToArray(), _propertyValues.ToArray(), 
+                _namedFields.ToArray(), _fieldValues.ToArray());
         }
 
         private void Process(LambdaExpression expression)
@@ -68,13 +68,13 @@ namespace AttributeBuilder.Standard
 
                 if (memberAssignment.Member is PropertyInfo)
                 {
-                    namedProperties.Add((PropertyInfo)memberAssignment.Member);
-                    propertyValues.Add(value);
+                    _namedProperties.Add((PropertyInfo)memberAssignment.Member);
+                    _propertyValues.Add(value);
                 }
                 else if (memberAssignment.Member is FieldInfo)
                 {
-                    namedFields.Add((FieldInfo) memberAssignment.Member);
-                    fieldValues.Add(value);
+                    _namedFields.Add((FieldInfo) memberAssignment.Member);
+                    _fieldValues.Add(value);
                 }
             }
         }

@@ -21,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="FluentCache" Version="4.0.0.1" />
     <PackageReference Include="Fody" Version="2.3.14">
-            <PrivateAssets>all</PrivateAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
     <PackageReference Include="ModuleInit.Fody" Version="1.7.0">

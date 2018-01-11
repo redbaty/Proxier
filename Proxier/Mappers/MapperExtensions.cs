@@ -14,6 +14,10 @@ namespace Proxier.Mappers
     public static class MapperExtensions
     {
         private static ModuleBuilder _moduleBuilder;
+
+        /// <summary>
+        /// The proxier dynamic assembly name
+        /// </summary>
         public const string DynamicNamespace = "Proxier";
 
         /// <summary>
@@ -45,7 +49,7 @@ namespace Proxier.Mappers
         ///     Copies object to another object of a type using reflection.
         /// </summary>
         /// <param name="baseClassInstance">The base class instance.</param>
-        /// <param name="target">The target.</param>
+        /// <param name="targetType">The type to copy to.</param>
         /// <returns></returns>
         public static object CopyTo(this object baseClassInstance, Type targetType)
         {
@@ -223,7 +227,7 @@ namespace Proxier.Mappers
             if (!type.IsClass)
                 throw new Exception("Type is not a class, cannot inject.");
 
-      
+
             var typeBuilder = ModuleBuilder.DefineType(type.Name + ".proxied", TypeAttributes.Public, type);
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
