@@ -19,24 +19,17 @@
     <DocumentationFile>bin\Release\netstandard2.0\Proxier.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentCache" Version="4.0.0.1" />
-    <PackageReference Include="Fody" Version="2.3.14">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
-    <PackageReference Include="ModuleInit.Fody" Version="1.7.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\..\..\.nuget\packages\newtonsoft.json\10.0.3\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\..\Fody\Fody\bin\Debug\net46\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>

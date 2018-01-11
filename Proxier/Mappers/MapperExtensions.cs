@@ -141,6 +141,8 @@ namespace Proxier.Mappers
             var mapper = type.FindOverridableType();
             if (mapper == null) return type;
 
+            type = mapper.Type;
+            
             var props = mapper.Mappings.Where(i => i.PropertyInfo != null).GroupBy(i => i.PropertyInfo).Select(i => new
             {
                 Expressions = i.SelectMany(o => o.Expression),
@@ -175,6 +177,9 @@ namespace Proxier.Mappers
         /// <returns></returns>
         public static Type AddParameterlessConstructor(this Type type)
         {
+            if (type == null)
+                return null;
+            
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
             if (constructor != null)
