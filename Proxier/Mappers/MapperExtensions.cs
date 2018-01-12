@@ -23,7 +23,8 @@ namespace Proxier.Mappers
         /// <summary>
         ///     Injected types cache
         /// </summary>
-        private static Dictionary<Type, Type> InjectedCache { get; } = new Dictionary<Type, Type>();
+        private static Dictionary<Type, AttributeMapper> InjectedCache { get; } =
+            new Dictionary<Type, AttributeMapper>();
 
         private static ModuleBuilder ModuleBuilder
         {
@@ -172,7 +173,12 @@ namespace Proxier.Mappers
             type = mapper.Type;
 
             if (InjectedCache.ContainsKey(mapper.BaseType))
-                return InjectedCache[mapper.BaseType];
+            {
+                if (InjectedCache[mapper.BaseType].Mappings != mapper.Mappings)
+                    InjectedCache.Remove(mapper.BaseType);
+                else
+                    return InjectedCache[mapper.BaseType].Type;
+            }
 
             var props = mapper.Mappings.Where(i => i.PropertyInfo != null).GroupBy(i => i.PropertyInfo.Name).Select(i =>
                 new
@@ -188,7 +194,7 @@ namespace Proxier.Mappers
                 (current, expression) =>
                     current.InjectPropertyAttributes(expression.PropertyInfo, expression.Expressions.ToArray()));
 
-            InjectedCache.Add(mapper.BaseType, type);
+            InjectedCache.Add(mapper.BaseType, mapper);
 
             if (mapper.Mappings.All(i => i.PropertyInfo != null))
                 return type;
