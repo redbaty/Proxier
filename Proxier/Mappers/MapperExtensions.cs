@@ -210,7 +210,14 @@ namespace Proxier.Mappers
         /// <returns></returns>
         public static bool HasParameterlessContructor(this Type type)
         {
-            return type.GetConstructor(Type.EmptyTypes) != null;
+            try
+            {
+                return type.GetConstructor(Type.EmptyTypes) != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
