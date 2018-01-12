@@ -194,6 +194,7 @@ namespace Proxier.Mappers
                 (current, expression) =>
                     current.InjectPropertyAttributes(expression.PropertyInfo, expression.Expressions.ToArray()));
 
+            mapper.Type = type;
             InjectedCache.Add(mapper.BaseType, mapper);
 
             if (mapper.Mappings.All(i => i.PropertyInfo != null))
