@@ -169,6 +169,8 @@ namespace Proxier.Mappers
             var mapper = type.FindOverridableType();
             if (mapper == null) return type;
 
+            type = mapper.Type;
+
             if (InjectedCache.ContainsKey(mapper.BaseType))
                 return InjectedCache[mapper.BaseType];
 
@@ -177,7 +179,10 @@ namespace Proxier.Mappers
                 {
                     Expressions = i.SelectMany(o => o.Expression),
                     i.First().PropertyInfo
-                });
+                }).ToList();
+
+            if (!props.Any())
+                return type;
 
             type = props.Aggregate(type,
                 (current, expression) =>

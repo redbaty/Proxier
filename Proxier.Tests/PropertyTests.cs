@@ -5,7 +5,7 @@ namespace Proxier.Tests
 {
     public class TestClass
     {
-        public string DefaultProperty { get; private set; }
+        public string DefaultProperty { get; set; }
     }
 
     public class TestClassExtension : AttributeMapper<TestClass>
