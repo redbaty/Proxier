@@ -3,4 +3,3 @@ mode: ContinuousDelivery
 branches: {}
 ignore:
   sha: []
- sha: []
