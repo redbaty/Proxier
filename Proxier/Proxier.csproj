@@ -19,6 +19,7 @@
     <DocumentationFile>bin\Release\netstandard2.0\Proxier.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Nanoid" Version="1.0.0" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
@@ -33,9 +34,6 @@
     <Reference Include="System.Threading.Thread, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\..\Fody\Fody\bin\Debug\net46\System.Threading.Thread.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AttributeBuilder.Standard\AttributeBuilder.Standard.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Proxier\**" />

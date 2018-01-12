@@ -18,7 +18,7 @@ namespace Proxier.Mappers
         /// <summary>
         /// The proxier dynamic assembly name
         /// </summary>
-        public const string DynamicNamespace = "Proxier";
+        public const string DynamicNamespace = "Proxier.Proxied";
 
         /// <summary>
         ///     Copies object to another object using reflection.
@@ -84,7 +84,7 @@ namespace Proxier.Mappers
                 return null;
 
             if (!Mapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
-            return (T) obj.CopyTo(Mapper.TypesOverrides[obj.GetType()].Spawn());
+            return (T) obj.CopyTo(obj.GetType().GetInjectedType());
         }
 
         /// <summary>
@@ -132,6 +132,11 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
+        /// Injected types cache
+        /// </summary>
+        private static Dictionary<Type, Type> InjectedCache { get; } = new Dictionary<Type, Type>();
+
+        /// <summary>
         ///     Gets the injected version of a type
         /// </summary>
         /// <param name="type">The type.</param>
@@ -141,17 +146,21 @@ namespace Proxier.Mappers
             var mapper = type.FindOverridableType();
             if (mapper == null) return type;
 
-            type = mapper.Type;
-            
-            var props = mapper.Mappings.Where(i => i.PropertyInfo != null).GroupBy(i => i.PropertyInfo).Select(i => new
-            {
-                Expressions = i.SelectMany(o => o.Expression),
-                i.Key
-            });
+            if (InjectedCache.ContainsKey(mapper.BaseType))
+                return InjectedCache[mapper.BaseType];
+
+            var props = mapper.Mappings.Where(i => i.PropertyInfo != null).GroupBy(i => i.PropertyInfo.Name).Select(i =>
+                new
+                {
+                    Expressions = i.SelectMany(o => o.Expression),
+                    i.First().PropertyInfo
+                });
 
             type = props.Aggregate(type,
                 (current, expression) =>
-                    current.InjectPropertyAttributes(expression.Key, expression.Expressions.ToArray()));
+                    current.InjectPropertyAttributes(expression.PropertyInfo, expression.Expressions.ToArray()));
+
+            InjectedCache.Add(mapper.BaseType, type);
 
             if (mapper.Mappings.All(i => i.PropertyInfo != null))
                 return type;
@@ -185,7 +194,8 @@ namespace Proxier.Mappers
             if (constructor != null)
                 return type;
 
-            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".parameterless", TypeAttributes.Public, type);
+            var typeBuilder = ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".parameterless",
+                TypeAttributes.Public, type);
 
             var constructorBuilder =
                 typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
@@ -233,7 +243,8 @@ namespace Proxier.Mappers
                 throw new Exception("Type is not a class, cannot inject.");
 
 
-            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".proxied", TypeAttributes.Public, type);
+            var typeBuilder =
+                ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".proxied", TypeAttributes.Public, type);
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
             if (constructor == null)
@@ -284,7 +295,8 @@ namespace Proxier.Mappers
             params Expression<Func<Attribute>>[] expressions)
         {
             type = type.AddParameterlessConstructor();
-            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".proxied", TypeAttributes.Public, type);
+            var typeBuilder =
+                ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".proxied", TypeAttributes.Public, type);
             var custNamePropBldr = propInfo.Name.CreateProperty(typeBuilder, propInfo.PropertyType);
             foreach (var expression in expressions)
                 custNamePropBldr.SetCustomAttribute(expression);
@@ -301,7 +313,8 @@ namespace Proxier.Mappers
         public static Type InjectProperty(this Type type, string name, Type propertyType)
         {
             type = type.AddParameterlessConstructor();
-            var typeBuilder = ModuleBuilder.DefineType(type.Name + ".propertyInjected", TypeAttributes.Public, type);
+            var typeBuilder = ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".propertyInjected",
+                TypeAttributes.Public, type);
             name.CreateProperty(typeBuilder, propertyType);
             return typeBuilder.CreateTypeInfo().AsType();
         }
