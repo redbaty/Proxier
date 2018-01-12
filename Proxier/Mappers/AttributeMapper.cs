@@ -29,7 +29,7 @@ namespace Proxier.Mappers
         {
             Parent = this;
         }
-        
+
         /// <summary>
         ///     Gets or sets the kernel.
         /// </summary>

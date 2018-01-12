@@ -1,15 +1,11 @@
-using System;
-using System.Linq;
-using Newtonsoft.Json;
 using Proxier.Mappers;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Proxier.Tests
 {
     public class TestClass
     {
-        public string DefaultProperty { get; set; }
+        public string DefaultProperty { get; private set; }
     }
 
     public class TestClassExtension : AttributeMapper<TestClass>
@@ -22,13 +18,6 @@ namespace Proxier.Tests
     
     public class PropertyTests
     {
-        private readonly ITestOutputHelper _output;
-
-        public PropertyTests(ITestOutputHelper output)
-        {
-            this._output = output;
-        }
-
         [Fact]
         public void Test1()
         {

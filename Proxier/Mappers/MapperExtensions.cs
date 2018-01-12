@@ -13,12 +13,28 @@ namespace Proxier.Mappers
     /// </summary>
     public static class MapperExtensions
     {
+        /// <summary>
+        ///     The proxier dynamic assembly name
+        /// </summary>
+        public const string DynamicNamespace = "Proxier.Proxied";
+
         private static ModuleBuilder _moduleBuilder;
 
         /// <summary>
-        /// The proxier dynamic assembly name
+        ///     Injected types cache
         /// </summary>
-        public const string DynamicNamespace = "Proxier.Proxied";
+        private static Dictionary<Type, Type> InjectedCache { get; } = new Dictionary<Type, Type>();
+
+        private static ModuleBuilder ModuleBuilder
+        {
+            get
+            {
+                if (_moduleBuilder == null)
+                    _moduleBuilder = GetModuleBuilder();
+
+                return _moduleBuilder;
+            }
+        }
 
         /// <summary>
         ///     Copies object to another object using reflection.
@@ -73,6 +89,18 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
+        ///     Returns if a certain type contains a override
+        /// </summary>
+        /// <param name="item"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T HasTypeOverride<T>(this T item) where T : class
+        {
+            var mapper = item.GetType().FindOverridableType();
+            return mapper == null ? null : item;
+        }
+
+        /// <summary>
         ///     Gets the a injected version of a object.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -121,7 +149,7 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        /// Gets all the properties values, the key being its name.
+        ///     Gets all the properties values, the key being its name.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -130,11 +158,6 @@ namespace Proxier.Mappers
             return obj.GetType().GetProperties()
                 .ToLookup(property => property.Name, property => property.GetValue(obj));
         }
-
-        /// <summary>
-        /// Injected types cache
-        /// </summary>
-        private static Dictionary<Type, Type> InjectedCache { get; } = new Dictionary<Type, Type>();
 
         /// <summary>
         ///     Gets the injected version of a type
@@ -188,7 +211,7 @@ namespace Proxier.Mappers
         {
             if (type == null)
                 return null;
-            
+
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
             if (constructor != null)
@@ -204,17 +227,6 @@ namespace Proxier.Mappers
             cGen.Emit(OpCodes.Ret);
 
             return typeBuilder.CreateTypeInfo().AsType();
-        }
-
-        private static ModuleBuilder ModuleBuilder
-        {
-            get
-            {
-                if (_moduleBuilder == null)
-                    _moduleBuilder = GetModuleBuilder();
-
-                return _moduleBuilder;
-            }
         }
 
         /// <summary>

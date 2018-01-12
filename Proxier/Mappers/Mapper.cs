@@ -75,7 +75,8 @@ namespace Proxier.Mappers
                     @override.Value.OnKernelLoaded();
                 }
 
-                var count = AppDomain.CurrentDomain.GetAssemblies().First(i => i.GetName().Name == "Proxier.Proxied").GetTypes().Count();
+                var count = AppDomain.CurrentDomain.GetAssemblies().First(i => i.GetName().Name == "Proxier.Proxied")
+                    .GetTypes().Count();
                 return;
             }
 

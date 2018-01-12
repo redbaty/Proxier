@@ -5,8 +5,17 @@ using System.Reflection;
 
 namespace Proxier.Extensions
 {
+    /// <summary>
+    ///     Assembly extensions
+    /// </summary>
     public static class AssemblyExtensions
     {
+        /// <summary>
+        ///     Get all loadable types
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
         {
             if (assembly == null) throw new ArgumentNullException(nameof(assembly));
