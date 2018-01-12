@@ -76,7 +76,8 @@ namespace Proxier.Mappers
         /// <returns></returns>
         public object Spawn()
         {
-            return TransfomSpawn(Activator.CreateInstance(BaseType.GetInjectedType().AddParameterlessConstructor()));
+            TransfomSpawn(null);
+            return Activator.CreateInstance(BaseType.GetInjectedType(true).AddParameterlessConstructor());
         }
 
         /// <summary>
@@ -86,7 +87,8 @@ namespace Proxier.Mappers
         /// <returns></returns>
         public virtual object TransfomSpawn(object createInstance)
         {
-            Kernel?.Inject(createInstance);
+            if (createInstance != null)
+                Kernel?.Inject(createInstance);
             return createInstance;
         }
 

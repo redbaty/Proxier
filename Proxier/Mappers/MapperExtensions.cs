@@ -113,7 +113,7 @@ namespace Proxier.Mappers
                 return null;
 
             if (!Mapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
-            return (T) obj.CopyTo(obj.GetType().GetInjectedType());
+            return (T) obj.CopyTo(obj.GetType().FindOverridableType().Spawn());
         }
 
         /// <summary>
@@ -165,14 +165,14 @@ namespace Proxier.Mappers
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static Type GetInjectedType(this Type type)
+        public static Type GetInjectedType(this Type type, bool ignoreCache = false)
         {
             var mapper = type.FindOverridableType();
             if (mapper == null) return type;
 
             type = mapper.Type;
 
-            if (InjectedCache.ContainsKey(mapper.BaseType))
+            if (InjectedCache.ContainsKey(mapper.BaseType) && !ignoreCache)
             {
                 if (InjectedCache[mapper.BaseType].Mappings.Count != mapper.Mappings.Count)
                     InjectedCache.Remove(mapper.BaseType);
@@ -195,15 +195,18 @@ namespace Proxier.Mappers
                     current.InjectPropertyAttributes(expression.PropertyInfo, expression.Expressions.ToArray()));
 
             mapper.Type = type;
-            InjectedCache.Add(mapper.BaseType, mapper);
 
-            if (mapper.Mappings.All(i => i.PropertyInfo != null))
-                return type;
 
-            mapper.Type = mapper.Mappings.Where(i => i.PropertyInfo == null).Aggregate(type,
-                (current, expression) => current.InjectClassAttributes(expression.Expression));
-            
-            return  mapper.Type;
+            if (mapper.Mappings.Any(i => i.PropertyInfo == null))
+                mapper.Type = mapper.Mappings.Where(i => i.PropertyInfo == null).Aggregate(type,
+                    (current, expression) => current.InjectClassAttributes(expression.Expression));
+
+            if (InjectedCache.ContainsKey(mapper.BaseType))
+                InjectedCache[mapper.BaseType] = mapper;
+            else
+                InjectedCache.Add(mapper.BaseType, mapper);
+
+            return mapper.Type;
         }
 
         /// <summary>
