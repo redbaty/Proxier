@@ -174,7 +174,7 @@ namespace Proxier.Mappers
 
             if (InjectedCache.ContainsKey(mapper.BaseType))
             {
-                if (InjectedCache[mapper.BaseType].Mappings != mapper.Mappings)
+                if (InjectedCache[mapper.BaseType].Mappings.Count != mapper.Mappings.Count)
                     InjectedCache.Remove(mapper.BaseType);
                 else
                     return InjectedCache[mapper.BaseType].Type;
@@ -200,8 +200,10 @@ namespace Proxier.Mappers
             if (mapper.Mappings.All(i => i.PropertyInfo != null))
                 return type;
 
-            return mapper.Mappings.Where(i => i.PropertyInfo == null).Aggregate(type,
+            mapper.Type = mapper.Mappings.Where(i => i.PropertyInfo == null).Aggregate(type,
                 (current, expression) => current.InjectClassAttributes(expression.Expression));
+            
+            return  mapper.Type;
         }
 
         /// <summary>
