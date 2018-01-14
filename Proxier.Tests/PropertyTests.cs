@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Proxier.Extensions;
 using Proxier.Mappers;
+using Proxier.Mappers.Maps;
 using Xunit;
 
 namespace Proxier.Tests
@@ -37,6 +38,8 @@ namespace Proxier.Tests
         public void Test1()
         {
             var item = new TestClass();
+            ProxierMapper.InitializeMapperClasses();
+
             var crazyObj = item.AddProperty("Hello", typeof(string))
                 .AddPropertyAttribute(() => new TestPropertyAttribute())
                 .AddClassAttribute(() => new TestClassAttribute()).Object;

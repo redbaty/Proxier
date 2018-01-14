@@ -6,7 +6,10 @@ using Proxier.Extensions;
 
 namespace Proxier.Mappers.Maps
 {
-    public class ProxierMapper
+    /// <summary>
+    /// Proxier manager
+    /// </summary>
+    public static class ProxierMapper
     {
         /// <summary>
         /// Global mapping overrides
@@ -36,9 +39,6 @@ namespace Proxier.Mappers.Maps
                     @override.Value.Kernel = kernel;
                     @override.Value.OnKernelLoaded();
                 }
-
-                var count = AppDomain.CurrentDomain.GetAssemblies().First(i => i.GetName().Name == "Proxier.Proxied")
-                    .GetTypes().Count();
                 return;
             }
 
