@@ -10,27 +10,6 @@ namespace Proxier.Mappers.Maps
     public class PropertyMap : IPropertyMap
     {
         /// <summary>
-        /// The parent mapper
-        /// </summary>
-        public AttributeMapper Parent { get; }
-
-        /// <summary>
-        /// Property name
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// The property type
-        /// </summary>
-        public Type PropertyType { get; set; }
-
-        /// <inheritdoc />
-        /// <summary>
-        ///     This mapper attribute expression
-        /// </summary>
-        public Expression<Func<Attribute>>[] Attributes { get; set; } = new Expression<Func<Attribute>>[0];
-
-        /// <summary>
         /// Creates a new property
         /// </summary>
         /// <param name="parent"></param>
@@ -42,5 +21,26 @@ namespace Proxier.Mappers.Maps
             Name = name;
             PropertyType = propertyType;
         }
+
+        /// <summary>
+        /// Property name
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The property type
+        /// </summary>
+        public Type PropertyType { get; set; }
+
+        /// <summary>
+        /// The parent mapper
+        /// </summary>
+        public AttributeMapper Parent { get; }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// This mapper attribute expression
+        /// </summary>
+        public Expression<Func<Attribute>>[] Attributes { get; set; } = new Expression<Func<Attribute>>[0];
     }
 }

@@ -12,28 +12,32 @@ namespace AttributeBuilder.Standard
     /// </summary>
     internal class CustomAttributeBuilderBuilder
     {
-        protected ConstructorInfo Constructor;
-        protected readonly List<object> ConstructorArgs = new List<object>();
+        private readonly List<object> _fieldValues = new List<object>();
+        private readonly List<FieldInfo> _namedFields = new List<FieldInfo>();
         private readonly List<PropertyInfo> _namedProperties = new List<PropertyInfo>();
         private readonly List<object> _propertyValues = new List<object>();
-        private readonly List<FieldInfo> _namedFields = new List<FieldInfo>();
-        private readonly List<object> _fieldValues = new List<object>();
+        protected readonly List<object> ConstructorArgs = new List<object>();
+        protected ConstructorInfo Constructor;
 
         /// <summary>
-        /// Creates a CustomAttributeBuilder object based on a lambda expression, 
-        /// matching the type of attribute, the constructor and its arguments and 
+        /// Creates a CustomAttributeBuilder object based on a lambda expression,
+        /// matching the type of attribute, the constructor and its arguments and
         /// the named parameters.
         /// </summary>
-        /// <param name="expression">A lamda expression of type Expression.New or 
-        /// Expression.MemberInit.</param>
-        /// <returns>A CustomAttributeBuilder with the same properties as the attribute 
-        /// constructed in the lambda expression.</returns>
+        /// <param name="expression">
+        /// A lamda expression of type Expression.New or
+        /// Expression.MemberInit.
+        /// </param>
+        /// <returns>
+        /// A CustomAttributeBuilder with the same properties as the attribute
+        /// constructed in the lambda expression.
+        /// </returns>
         public CustomAttributeBuilder Build(Expression<Func<Attribute>> expression)
         {
             Process(expression);
 
             return new CustomAttributeBuilder(Constructor, ConstructorArgs.ToArray(),
-                _namedProperties.ToArray(), _propertyValues.ToArray(), 
+                _namedProperties.ToArray(), _propertyValues.ToArray(),
                 _namedFields.ToArray(), _fieldValues.ToArray());
         }
 
@@ -57,8 +61,8 @@ namespace AttributeBuilder.Standard
             ProcessNew(expression.NewExpression);
 
             var bindings = from b in expression.Bindings
-                           where b.BindingType == MemberBindingType.Assignment
-                           select b;
+                where b.BindingType == MemberBindingType.Assignment
+                select b;
 
             foreach (var binding in bindings)
             {
@@ -73,7 +77,7 @@ namespace AttributeBuilder.Standard
                 }
                 else if (memberAssignment.Member is FieldInfo)
                 {
-                    _namedFields.Add((FieldInfo) memberAssignment.Member);
+                    _namedFields.Add((FieldInfo)memberAssignment.Member);
                     _fieldValues.Add(value);
                 }
             }

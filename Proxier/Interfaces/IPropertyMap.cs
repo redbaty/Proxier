@@ -10,10 +10,10 @@ namespace Proxier.Interfaces
     public interface IPropertyMap
     {
         /// <summary>
-        ///     Gets or sets the parent.
+        /// Gets or sets the parent.
         /// </summary>
         /// <value>
-        ///     The parent.
+        /// The parent.
         /// </value>
         AttributeMapper Parent { get; }
 

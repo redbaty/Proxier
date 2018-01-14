@@ -5,8 +5,8 @@ using System.Reflection;
 namespace AttributeBuilder.Standard
 {
     /// <summary>
-    /// Able to create a CustomAttributeBuilder instance from a lambda expression 
-    /// in reflection only scenarios where the type of the attribute is loaded 
+    /// Able to create a CustomAttributeBuilder instance from a lambda expression
+    /// in reflection only scenarios where the type of the attribute is loaded
     /// into the reflection only context.
     /// </summary>
     internal class ReflectionOnlyCustomAttributeBuilderBuilder : CustomAttributeBuilderBuilder
@@ -17,12 +17,12 @@ namespace AttributeBuilder.Standard
 
             if (expression.Constructor.DeclaringType != null)
             {
-                Assembly assembly =
+                var assembly =
                     Assembly.ReflectionOnlyLoad(expression.Constructor.DeclaringType.Assembly.FullName);
 
                 Constructor = assembly
                     .GetType(expression.Constructor.DeclaringType.FullName)
-                    .GetConstructor(ConstructorArgs.Select((arg) => arg.GetType()).ToArray());
+                    .GetConstructor(ConstructorArgs.Select(arg => arg.GetType()).ToArray());
             }
         }
     }

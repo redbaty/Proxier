@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 namespace AttributeBuilder.Standard
 {
     /// <summary>
-    /// Provides a set of static methods for applying attributes to the Builder 
+    /// Provides a set of static methods for applying attributes to the Builder
     /// classes found in the System.Reflection.Emit namespace.
     /// </summary>
     public static class BuilderExtensions
@@ -18,8 +18,8 @@ namespace AttributeBuilder.Standard
         public static void SetCustomAttribute(this AssemblyBuilder assembly, Expression<Func<Attribute>> expression)
         {
             var builder = assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             assembly.SetCustomAttribute(attribute);
         }
@@ -29,11 +29,12 @@ namespace AttributeBuilder.Standard
         /// </summary>
         /// <param name="constructor">An instance of ConstructorBuilder to apply the attribute to.</param>
         /// <param name="expression">An expression that represents the attribute.</param>
-        public static void SetCustomAttribute(this ConstructorBuilder constructor, Expression<Func<Attribute>> expression)
+        public static void SetCustomAttribute(this ConstructorBuilder constructor,
+            Expression<Func<Attribute>> expression)
         {
             var builder = constructor.Module.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             constructor.SetCustomAttribute(attribute);
         }
@@ -46,8 +47,8 @@ namespace AttributeBuilder.Standard
         public static void SetCustomAttribute(this EnumBuilder @enum, Expression<Func<Attribute>> expression)
         {
             var builder = @enum.Module.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             @enum.SetCustomAttribute(attribute);
         }
@@ -73,8 +74,8 @@ namespace AttributeBuilder.Standard
         public static void SetCustomAttribute(this FieldBuilder field, Expression<Func<Attribute>> expression)
         {
             var builder = field.Module.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             field.SetCustomAttribute(attribute);
         }
@@ -84,11 +85,12 @@ namespace AttributeBuilder.Standard
         /// </summary>
         /// <param name="parameter">An instance of GenericTypeParameterBuilder to apply the attribute to.</param>
         /// <param name="expression">An expression that represents the attribute.</param>
-        public static void SetCustomAttribute(this GenericTypeParameterBuilder parameter, Expression<Func<Attribute>> expression)
+        public static void SetCustomAttribute(this GenericTypeParameterBuilder parameter,
+            Expression<Func<Attribute>> expression)
         {
             var builder = parameter.Module.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             parameter.SetCustomAttribute(attribute);
         }
@@ -101,8 +103,8 @@ namespace AttributeBuilder.Standard
         public static void SetCustomAttribute(this MethodBuilder method, Expression<Func<Attribute>> expression)
         {
             var builder = method.Module.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             method.SetCustomAttribute(attribute);
         }
@@ -115,8 +117,8 @@ namespace AttributeBuilder.Standard
         public static void SetCustomAttribute(this ModuleBuilder module, Expression<Func<Attribute>> expression)
         {
             var builder = module.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             module.SetCustomAttribute(attribute);
         }
@@ -142,8 +144,8 @@ namespace AttributeBuilder.Standard
         public static void SetCustomAttribute(this PropertyBuilder property, Expression<Func<Attribute>> expression)
         {
             var builder = property.Module.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             property.SetCustomAttribute(attribute);
         }
@@ -156,11 +158,10 @@ namespace AttributeBuilder.Standard
         public static void SetCustomAttribute(this TypeBuilder type, Expression<Func<Attribute>> expression)
         {
             var builder = type.Assembly.ReflectionOnly
-                              ? new ReflectionOnlyCustomAttributeBuilderBuilder()
-                              : new CustomAttributeBuilderBuilder();
+                ? new ReflectionOnlyCustomAttributeBuilderBuilder()
+                : new CustomAttributeBuilderBuilder();
             var attribute = builder.Build(expression);
             type.SetCustomAttribute(attribute);
         }
     }
 }
- 
