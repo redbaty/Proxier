@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Proxier.Mappers;
 
-namespace Proxier.Mappers
+namespace Proxier.Extensions
 {
     /// <summary>
     ///     Property info extensions

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using Ninject;
+using Proxier.Extensions;
+using Proxier.Mappers.Maps;
 
 namespace Proxier.Mappers
 {
@@ -69,8 +71,13 @@ namespace Proxier.Mappers
         /// <value>
         ///     The mappings.
         /// </value>
-        public List<Mapper> Mappings { get; } = new List<Mapper>();
-
+        public List<AttributeMap> AttributeMappings { get; } = new List<AttributeMap>();
+        
+        /// <summary>
+        /// Represents custom properties
+        /// </summary>
+        public List<PropertyMap> CustomProperties { get; } = new List<PropertyMap>();
+        
         /// <summary>
         /// </summary>
         /// <returns></returns>
@@ -105,13 +112,13 @@ namespace Proxier.Mappers
         /// <param name="expression">The expression.</param>
         public void AddClassAttribute(params Expression<Func<Attribute>>[] expression)
         {
-            var mapper = new Mapper(this)
+            var mapper = new AttributeMap(this)
             {
                 PropertyInfo = null,
-                Expression = expression
+                Attributes = expression
             };
 
-            Mappings.Add(mapper);
+            AttributeMappings.Add(mapper);
         }
 
         /// <summary>
@@ -119,7 +126,7 @@ namespace Proxier.Mappers
         /// </summary>
         public void AddProperty(string prop, Type type)
         {
-            Type = Type.InjectProperty(prop, type);
+            CustomProperties.Add(new PropertyMap(this, prop, type));
         }
 
         /// <summary>
@@ -128,9 +135,9 @@ namespace Proxier.Mappers
         public void AddPropertyAttribute(string prop,
             params Expression<Func<Attribute>>[] expression)
         {
-            Mappings.Add(new Mapper(this)
+            AttributeMappings.Add(new AttributeMap(this)
             {
-                Expression = expression,
+                Attributes = expression,
                 PropertyInfo = Type.GetHighestProperty(prop)
             });
         }
@@ -175,13 +182,13 @@ namespace Proxier.Mappers
                 throw new ArgumentException(
                     $"Expresion '{propertyLambda}' refers to a property that is not from type {type}.");
 
-            var mapper = new Mapper(this)
+            var mapper = new AttributeMap(this)
             {
-                Expression = expression,
+                Attributes = expression,
                 PropertyInfo = propInfo
             };
 
-            Mappings.Add(mapper);
+            AttributeMappings.Add(mapper);
         }
     }
 }

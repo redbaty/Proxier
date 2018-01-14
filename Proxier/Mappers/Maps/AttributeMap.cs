@@ -5,25 +5,27 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Ninject;
 using Proxier.Extensions;
+using Proxier.Interfaces;
 
-namespace Proxier.Mappers
+namespace Proxier.Mappers.Maps
 {
+    /// <inheritdoc />
     /// <summary>
     ///     The mapper class
     /// </summary>
-    public class Mapper
+    public class AttributeMap : IPropertyMap
     {
-        static Mapper()
+        static AttributeMap()
         {
             InitializeMapperClasses();
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Mapper" /> class.
+        ///     Initializes a new instance of the <see cref="AttributeMap" /> class.
         /// </summary>
         /// <param name="parent">The parent.</param>
         /// <exception cref="ArgumentNullException">parent</exception>
-        public Mapper(AttributeMapper parent)
+        public AttributeMap(AttributeMapper parent)
         {
             Parent = parent ?? throw new ArgumentNullException(nameof(parent));
         }
@@ -37,13 +39,14 @@ namespace Proxier.Mappers
         /// <summary>
         ///     This mapper attribute expression
         /// </summary>
-        public Expression<Func<Attribute>>[] Expression { get; set; }
+        public Expression<Func<Attribute>>[] Attributes { get; set; }
 
         /// <summary>
         ///     This mapper property info
         /// </summary>
         public PropertyInfo PropertyInfo { get; set; }
 
+        /// <inheritdoc />
         /// <summary>
         ///     Gets or sets the parent.
         /// </summary>
