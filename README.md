@@ -16,8 +16,9 @@ Have you ever had a class that is generated during the build process or at runti
 
 * 🐱‍👤 Out of the box support for Ninject!
 * 🕛 0 configuration time, **just start using**.
-* :information_source: Semantic extensions, easy to use.
-* .NET Core support
+*  ℹ️ Semantic extensions, easy to use.
+* 🌎 .NET Core support
+* ⚙️ Fluent engine
 
 ## Code Samples :pencil2:
 
@@ -58,6 +59,10 @@ InjectedMyClassObject.CopyTo(MyClassObject);
 ```
 
 and all the common properties will be overriden by the ones on the injected type.
+
+#### Fluent extensions
+As of version 1.5.x fluent extensions are also supported. [You can check them out on the test class](https://github.com/redbaty/Proxier/blob/master/Proxier.Tests/PropertyTests.cs)
+
 
 #### Dependency Injection
 
