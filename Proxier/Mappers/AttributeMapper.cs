@@ -86,11 +86,13 @@ namespace Proxier.Mappers
         public void Merge(AttributeMapper toMerge)
         {
             AttributeMappings.AddRange(toMerge.AttributeMappings);
-            AttributeMappings = AttributeMappings.GroupBy(i => i.PropertyInfo.Name).Select(i => new AttributeMap(this)
-            {
-                Attributes = i.SelectMany(o => o.Attributes).ToArray(),
-                PropertyInfo = i.First().PropertyInfo
-            }).ToList();
+            AttributeMappings = AttributeMappings.GroupBy(i => i?.PropertyInfo?.Name).Where(i => i != null)
+                .Select(i =>
+                new AttributeMap(this)
+                {
+                    Attributes = i.SelectMany(o => o.Attributes).ToArray(),
+                    PropertyInfo = i.First().PropertyInfo
+                }).ToList();
 
             CustomProperties.AddRange(toMerge.CustomProperties);
             CustomProperties = CustomProperties.GroupBy(i => i.Name)
@@ -117,6 +119,7 @@ namespace Proxier.Mappers
             {
                 Kernel?.Inject(createInstance);
             }
+
             return createInstance;
         }
 

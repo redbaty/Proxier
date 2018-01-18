@@ -39,6 +39,7 @@ namespace Proxier.Mappers.Maps
                     @override.Value.Kernel = kernel;
                     @override.Value.OnKernelLoaded();
                 }
+
                 return;
             }
 
@@ -49,17 +50,21 @@ namespace Proxier.Mappers.Maps
 
             var mappers = types.Where(i => i.HasParameterlessContructor())
                 .Select(Activator.CreateInstance).OfType<T>()
+                .Where(i => i != null)
                 .ToList();
 
-            foreach (var type in mappers)
+            foreach (var mapper in mappers)
             {
                 if (kernel != null)
                 {
-                    type.Kernel = kernel;
-                    type.OnKernelLoaded();
+                    mapper.Kernel = kernel;
+                    mapper.OnKernelLoaded();
                 }
 
-                TypesOverrides.Add(type.BaseType, type);
+                if (!TypesOverrides.ContainsKey(mapper.BaseType))
+                    TypesOverrides.Add(mapper.BaseType, mapper);
+                else
+                    TypesOverrides[mapper.BaseType].Merge(mapper);
             }
         }
     }
