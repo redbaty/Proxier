@@ -1,59 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using Ninject;
 using Proxier.Extensions;
 
-namespace Proxier.Mappers
+namespace Proxier.Mappers.Maps
 {
     /// <summary>
-    ///     The mapper class
+    /// Proxier manager
     /// </summary>
-    public class Mapper
+    public static class ProxierMapper
     {
-        static Mapper()
-        {
-            InitializeMapperClasses();
-        }
-
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Mapper" /> class.
-        /// </summary>
-        /// <param name="parent">The parent.</param>
-        /// <exception cref="ArgumentNullException">parent</exception>
-        public Mapper(AttributeMapper parent)
-        {
-            Parent = parent ?? throw new ArgumentNullException(nameof(parent));
-        }
-
-        /// <summary>
-        ///     Global mapping overrides
+        /// Global mapping overrides
         /// </summary>
         public static Dictionary<Type, AttributeMapper> TypesOverrides { get; } =
             new Dictionary<Type, AttributeMapper>();
 
         /// <summary>
-        ///     This mapper attribute expression
-        /// </summary>
-        public Expression<Func<Attribute>>[] Expression { get; set; }
-
-        /// <summary>
-        ///     This mapper property info
-        /// </summary>
-        public PropertyInfo PropertyInfo { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the parent.
-        /// </summary>
-        /// <value>
-        ///     The parent.
-        /// </value>
-        public AttributeMapper Parent { get; }
-
-        /// <summary>
-        ///     Initializes the mapper classes (AttributeMapper).
+        /// Initializes the mapper classes (AttributeMapper).
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         public static void InitializeMapperClasses(IKernel kernel = null)
@@ -62,7 +27,7 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Initializes the mapper classes from a certain type.
+        /// Initializes the mapper classes from a certain type.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         public static void InitializeMapperClasses<T>(IKernel kernel = null) where T : AttributeMapper
@@ -74,9 +39,6 @@ namespace Proxier.Mappers
                     @override.Value.Kernel = kernel;
                     @override.Value.OnKernelLoaded();
                 }
-
-                var count = AppDomain.CurrentDomain.GetAssemblies().First(i => i.GetName().Name == "Proxier.Proxied")
-                    .GetTypes().Count();
                 return;
             }
 

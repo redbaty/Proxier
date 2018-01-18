@@ -1,4 +1,8 @@
+using System;
+using System.Reflection;
+using Proxier.Extensions;
 using Proxier.Mappers;
+using Proxier.Mappers.Maps;
 using Xunit;
 
 namespace Proxier.Tests
@@ -15,15 +19,35 @@ namespace Proxier.Tests
             AddProperty("NewProperty", typeof(string));
         }
     }
-    
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class TestPropertyAttribute : Attribute
+    {
+        public string Test { get; set; } = "Hello World!";
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class TestClassAttribute : Attribute
+    {
+        public string Test { get; set; } = "World Hello!";
+    }
+
     public class PropertyTests
     {
         [Fact]
         public void Test1()
         {
             var item = new TestClass();
-            
-            Assert.True(item.GetType().GetProperty(nameof(TestClass.DefaultProperty)) != null);            
+            ProxierMapper.InitializeMapperClasses();
+
+            var crazyObj = item.AddProperty("Hello", typeof(string))
+                .AddPropertyAttribute(() => new TestPropertyAttribute())
+                .AddClassAttribute(() => new TestClassAttribute()).Object;
+
+            Assert.True(crazyObj.GetType().GetProperty("Hello") != null);
+            Assert.True(crazyObj.GetType().GetProperty("Hello").GetCustomAttribute<TestPropertyAttribute>() != null);
+            Assert.True(crazyObj.GetType().GetCustomAttribute<TestClassAttribute>() != null);
+            Assert.True(item.GetType().GetProperty(nameof(TestClass.DefaultProperty)) != null);
             Assert.True(item.GetType().GetInjectedType().GetProperty("NewProperty") != null);
         }
     }

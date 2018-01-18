@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Ninject;
+using Proxier.Extensions;
+using Proxier.Mappers.Maps;
 
 namespace Proxier.Mappers
 {
     /// <summary>
-    ///     Mapper abstraction
+    /// Mapper abstraction
     /// </summary>
     public class AttributeMapper
     {
         /// <inheritdoc />
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Proxier.Mappers.AttributeMapper" /> class.
+        /// Initializes a new instance of the <see cref="T:Proxier.Mappers.AttributeMapper" /> class.
         /// </summary>
         /// <param name="type">The type.</param>
         public AttributeMapper(Type type) : this()
@@ -23,7 +26,7 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="AttributeMapper" /> class.
+        /// Initializes a new instance of the <see cref="AttributeMapper" /> class.
         /// </summary>
         public AttributeMapper()
         {
@@ -31,45 +34,68 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Gets or sets the kernel.
+        /// Gets or sets the kernel.
         /// </summary>
         /// <value>
-        ///     The kernel.
+        /// The kernel.
         /// </value>
         public IKernel Kernel { get; set; }
 
         /// <summary>
-        ///     Gets or sets the parent.
+        /// Gets or sets the parent.
         /// </summary>
         /// <value>
-        ///     The parent.
+        /// The parent.
         /// </value>
         public AttributeMapper Parent { get; set; }
 
         /// <summary>
-        ///     Gets or sets the injected type.
+        /// Gets or sets the injected type.
         /// </summary>
         /// <value>
-        ///     The type.
+        /// The type.
         /// </value>
         public Type Type { get; set; }
 
         /// <summary>
-        ///     Gets the base type.
+        /// Gets the base type.
         /// </summary>
         /// <value>
-        ///     The type of the base.
+        /// The type of the base.
         /// </value>
         public Type BaseType { get; }
 
 
         /// <summary>
-        ///     Gets the mappings.
+        /// Gets the mappings.
         /// </summary>
         /// <value>
-        ///     The mappings.
+        /// The mappings.
         /// </value>
-        public List<Mapper> Mappings { get; } = new List<Mapper>();
+        public List<AttributeMap> AttributeMappings { get; private set; } = new List<AttributeMap>();
+
+        /// <summary>
+        /// Represents custom properties
+        /// </summary>
+        public List<PropertyMap> CustomProperties { get; private set; } = new List<PropertyMap>();
+
+        /// <summary>
+        /// Merges the specified attribute mapper to this one.
+        /// </summary>
+        /// <param name="toMerge">To merge.</param>
+        public void Merge(AttributeMapper toMerge)
+        {
+            AttributeMappings.AddRange(toMerge.AttributeMappings);
+            AttributeMappings = AttributeMappings.GroupBy(i => i.PropertyInfo.Name).Select(i => new AttributeMap(this)
+            {
+                Attributes = i.SelectMany(o => o.Attributes).ToArray(),
+                PropertyInfo = i.First().PropertyInfo
+            }).ToList();
+
+            CustomProperties.AddRange(toMerge.CustomProperties);
+            CustomProperties = CustomProperties.GroupBy(i => i.Name)
+                .Select(i => new PropertyMap(this, i.Key, i.First().PropertyType)).ToList();
+        }
 
         /// <summary>
         /// </summary>
@@ -77,60 +103,62 @@ namespace Proxier.Mappers
         public object Spawn()
         {
             TransfomSpawn(null);
-            return Activator.CreateInstance(BaseType.GetInjectedType(true).AddParameterlessConstructor());
+            return Activator.CreateInstance(BaseType.GetInjectedType(this, true).AddParameterlessConstructor());
         }
 
         /// <summary>
-        ///     Transfoms the spawn method.
+        /// Transforms the spawn method.
         /// </summary>
         /// <param name="createInstance">The create instance.</param>
         /// <returns></returns>
         public virtual object TransfomSpawn(object createInstance)
         {
             if (createInstance != null)
+            {
                 Kernel?.Inject(createInstance);
+            }
             return createInstance;
         }
 
         /// <summary>
-        ///     Called when [kernel loaded].
+        /// Called when [kernel loaded].
         /// </summary>
         public virtual void OnKernelLoaded()
         {
         }
 
         /// <summary>
-        ///     Add an attribute to a class.
+        /// Add an attribute to a class.
         /// </summary>
         /// <param name="expression">The expression.</param>
         public void AddClassAttribute(params Expression<Func<Attribute>>[] expression)
         {
-            var mapper = new Mapper(this)
+            var mapper = new AttributeMap(this)
             {
                 PropertyInfo = null,
-                Expression = expression
+                Attributes = expression
             };
 
-            Mappings.Add(mapper);
+            AttributeMappings.Add(mapper);
         }
 
         /// <summary>
-        ///     Adds a mapper by name.
+        /// Adds a mapper by name.
         /// </summary>
         public void AddProperty(string prop, Type type)
         {
-            Type = Type.InjectProperty(prop, type);
+            CustomProperties.Add(new PropertyMap(this, prop, type));
         }
 
         /// <summary>
-        ///     Adds a mapper by name.
+        /// Adds a mapper by name.
         /// </summary>
         public void AddPropertyAttribute(string prop,
             params Expression<Func<Attribute>>[] expression)
         {
-            Mappings.Add(new Mapper(this)
+            AttributeMappings.Add(new AttributeMap(this)
             {
-                Expression = expression,
+                Attributes = expression,
                 PropertyInfo = Type.GetHighestProperty(prop)
             });
         }
@@ -138,20 +166,20 @@ namespace Proxier.Mappers
 
     /// <inheritdoc />
     /// <summary>
-    ///     Mapper abstractions
+    /// Mapper abstractions
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     public class AttributeMapper<TSource> : AttributeMapper
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="AttributeMapper{TSource}" /> class.
+        /// Initializes a new instance of the <see cref="AttributeMapper{TSource}" /> class.
         /// </summary>
         public AttributeMapper() : base(typeof(TSource))
         {
         }
 
         /// <summary>
-        ///     Adds a mapper.
+        /// Adds a mapper.
         /// </summary>
         /// <typeparam name="TProperty"></typeparam>
         /// <param name="expression"></param>
@@ -162,26 +190,32 @@ namespace Proxier.Mappers
             var type = Type;
 
             if (!(propertyLambda.Body is MemberExpression member))
+            {
                 throw new ArgumentException(
                     $"Expression '{propertyLambda}' refers to a method, not a property.");
+            }
 
             var propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
+            {
                 throw new ArgumentException(
                     $"Expression '{propertyLambda}' refers to a field, not a property.");
+            }
 
             if (type != propInfo.ReflectedType &&
                 !type.IsSubclassOf(propInfo.ReflectedType))
-                throw new ArgumentException(
-                    $"Expresion '{propertyLambda}' refers to a property that is not from type {type}.");
-
-            var mapper = new Mapper(this)
             {
-                Expression = expression,
+                throw new ArgumentException(
+                    $"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
+            }
+
+            var mapper = new AttributeMap(this)
+            {
+                Attributes = expression,
                 PropertyInfo = propInfo
             };
 
-            Mappings.Add(mapper);
+            AttributeMappings.Add(mapper);
         }
     }
 }

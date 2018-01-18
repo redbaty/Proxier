@@ -5,23 +5,25 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using AttributeBuilder.Standard;
+using Proxier.Mappers;
+using Proxier.Mappers.Maps;
 
-namespace Proxier.Mappers
+namespace Proxier.Extensions
 {
     /// <summary>
-    ///     Mapper extensions
+    /// Mapper extensions
     /// </summary>
-    public static class MapperExtensions
+    public static partial class MapperExtensions
     {
         /// <summary>
-        ///     The proxier dynamic assembly name
+        /// The proxier dynamic assembly name
         /// </summary>
         public const string DynamicNamespace = "Proxier.Proxied";
 
-        private static ModuleBuilder _moduleBuilder;
+        private static ModuleBuilder moduleBuilder;
 
         /// <summary>
-        ///     Injected types cache
+        /// Injected types cache
         /// </summary>
         private static Dictionary<Type, AttributeMapper> InjectedCache { get; } =
             new Dictionary<Type, AttributeMapper>();
@@ -30,79 +32,17 @@ namespace Proxier.Mappers
         {
             get
             {
-                if (_moduleBuilder == null)
-                    _moduleBuilder = GetModuleBuilder();
+                if (moduleBuilder == null)
+                {
+                    moduleBuilder = GetModuleBuilder();
+                }
 
-                return _moduleBuilder;
+                return moduleBuilder;
             }
         }
 
         /// <summary>
-        ///     Copies object to another object using reflection.
-        /// </summary>
-        /// <param name="baseClassInstance">The base class instance.</param>
-        /// <param name="target">The target.</param>
-        /// <returns></returns>
-        public static object CopyTo(this object baseClassInstance, object target)
-        {
-            foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
-                try
-                {
-                    var value = propertyInfo.GetValue(baseClassInstance, null);
-                    var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
-
-                    if (null != value)
-                        highEquiv.SetValue(target, value, null);
-                }
-                catch
-                {
-                    // ignored
-                }
-
-            return target;
-        }
-
-        /// <summary>
-        ///     Copies object to another object of a type using reflection.
-        /// </summary>
-        /// <param name="baseClassInstance">The base class instance.</param>
-        /// <param name="targetType">The type to copy to.</param>
-        /// <returns></returns>
-        public static object CopyTo(this object baseClassInstance, Type targetType)
-        {
-            var target = Activator.CreateInstance(targetType.AddParameterlessConstructor());
-
-            foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
-                try
-                {
-                    var value = propertyInfo.GetValue(baseClassInstance, null);
-                    var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
-
-                    if (null != value)
-                        highEquiv.SetValue(target, value, null);
-                }
-                catch
-                {
-                    // ignored
-                }
-
-            return target;
-        }
-
-        /// <summary>
-        ///     Returns if a certain type contains a override
-        /// </summary>
-        /// <param name="item"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static T HasTypeOverride<T>(this T item) where T : class
-        {
-            var mapper = item.GetType().FindOverridableType();
-            return mapper == null ? null : item;
-        }
-
-        /// <summary>
-        ///     Gets the a injected version of a object.
+        /// Gets the a injected version of a object.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj">The object.</param>
@@ -110,28 +50,35 @@ namespace Proxier.Mappers
         public static T GetInjectedObject<T>(this T obj) where T : class
         {
             if (obj == null)
+            {
                 return null;
+            }
 
-            if (!Mapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
-            return (T) obj.CopyTo(obj.GetType().FindOverridableType().Spawn());
+            if (!ProxierMapper.TypesOverrides.ContainsKey(obj.GetType()))
+            {
+                return obj;
+            }
+            return (T)obj.CopyTo(obj.GetType().GetMapper().Spawn());
         }
 
         /// <summary>
-        ///     Finds a parent mapper from a type.
+        /// Finds a parent mapper from a type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static T FindOverridableType<T>(this Type type) where T : AttributeMapper
+        public static T GetMapper<T>(this Type type) where T : AttributeMapper
         {
-            if (Mapper.TypesOverrides.ContainsKey(type))
-                return (T) Mapper.TypesOverrides[type];
+            if (ProxierMapper.TypesOverrides.ContainsKey(type))
+            {
+                return (T)ProxierMapper.TypesOverrides[type];
+            }
 
             var injType = type.GetAllBaseTypes()
-                .FirstOrDefault(allBaseType => Mapper.TypesOverrides.ContainsKey(allBaseType));
+                .FirstOrDefault(allBaseType => ProxierMapper.TypesOverrides.ContainsKey(allBaseType));
 
             try
             {
-                return (T) (injType != null ? Mapper.TypesOverrides[injType] : null);
+                return (T)(injType != null ? ProxierMapper.TypesOverrides[injType] : null);
             }
             catch
             {
@@ -140,55 +87,64 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Finds a parent mapper from a type.
+        /// Finds a parent mapper from a type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static AttributeMapper FindOverridableType(this Type type)
+        public static AttributeMapper GetMapper(this Type type)
         {
-            return FindOverridableType<AttributeMapper>(type);
+            return GetMapper<AttributeMapper>(type);
         }
 
         /// <summary>
-        ///     Gets all the properties values, the key being its name.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static ILookup<string, object> GetPropertiesValue(this object obj)
-        {
-            return obj.GetType().GetProperties()
-                .ToLookup(property => property.Name, property => property.GetValue(obj));
-        }
-
-        /// <summary>
-        ///     Gets the injected version of a type
+        /// Gets the injected version of a type
         /// </summary>
         /// <param name="type">The type.</param>
+        /// <param name="amapper"></param>
+        /// <param name="ignoreCache"></param>
         /// <returns></returns>
-        public static Type GetInjectedType(this Type type, bool ignoreCache = false)
+        public static Type GetInjectedType(this Type type, AttributeMapper amapper = null, bool ignoreCache = false)
         {
-            var mapper = type.FindOverridableType();
-            if (mapper == null) return type;
-
-            type = mapper.Type;
+            var mapper = amapper ?? type.GetMapper();
+            if (mapper == null)
+            {
+                return type;
+            }
 
             if (InjectedCache.ContainsKey(mapper.BaseType) && !ignoreCache)
             {
-                if (InjectedCache[mapper.BaseType].Mappings.Count != mapper.Mappings.Count)
+                if (InjectedCache[mapper.BaseType].AttributeMappings.Count != mapper.AttributeMappings.Count)
+                {
                     InjectedCache.Remove(mapper.BaseType);
+                }
                 else
+                {
                     return InjectedCache[mapper.BaseType].Type;
+                }
             }
 
-            var props = mapper.Mappings.Where(i => i.PropertyInfo != null).GroupBy(i => i.PropertyInfo.Name).Select(i =>
-                new
-                {
-                    Expressions = i.SelectMany(o => o.Expression),
-                    i.First().PropertyInfo
-                }).ToList();
+            var customProperties = mapper.CustomProperties.GroupBy(i => i.Name).Select(i =>
+                new { Name = i.Key, Attributes = i.SelectMany(o => o.Attributes).ToArray(), i.First().PropertyType });
+
+            foreach (var customProperty in customProperties)
+            {
+                type = type.InjectProperty(customProperty.Name, customProperty.PropertyType);
+                var prop = type.GetProperty(customProperty.Name);
+                type.InjectPropertyAttributes(prop, customProperty.Attributes);
+            }
+
+            var props = mapper.AttributeMappings.Where(i => i.PropertyInfo != null).GroupBy(i => i.PropertyInfo.Name)
+                .Select(i =>
+                    new
+                    {
+                        Expressions = i.SelectMany(o => o.Attributes),
+                        i.First().PropertyInfo
+                    }).ToList();
 
             if (!props.Any())
+            {
                 return type;
+            }
 
             type = props.Aggregate(type,
                 (current, expression) =>
@@ -197,49 +153,42 @@ namespace Proxier.Mappers
             mapper.Type = type;
 
 
-            if (mapper.Mappings.Any(i => i.PropertyInfo == null))
-                mapper.Type = mapper.Mappings.Where(i => i.PropertyInfo == null).Aggregate(type,
-                    (current, expression) => current.InjectClassAttributes(expression.Expression));
+            if (mapper.AttributeMappings.Any(i => i.PropertyInfo == null))
+            {
+                mapper.Type = mapper.AttributeMappings.Where(i => i.PropertyInfo == null).Aggregate(type,
+                    (current, expression) => current.InjectClassAttributes(expression.Attributes));
+            }
 
             if (InjectedCache.ContainsKey(mapper.BaseType))
+            {
                 InjectedCache[mapper.BaseType] = mapper;
+            }
             else
+            {
                 InjectedCache.Add(mapper.BaseType, mapper);
+            }
 
             return mapper.Type;
         }
 
         /// <summary>
-        ///     Gets if type has a parameterless constructor
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static bool HasParameterlessContructor(this Type type)
-        {
-            try
-            {
-                return type.GetConstructor(Type.EmptyTypes) != null;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        ///     Adds a parameterless constructor.
+        /// Adds a parameterless constructor.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
         public static Type AddParameterlessConstructor(this Type type)
         {
             if (type == null)
+            {
                 return null;
+            }
 
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
             if (constructor != null)
+            {
                 return type;
+            }
 
             var typeBuilder = ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".parameterless",
                 TypeAttributes.Public, type);
@@ -254,7 +203,7 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Generate a module builder.
+        /// Generate a module builder.
         /// </summary>
         /// <returns></returns>
         private static ModuleBuilder GetModuleBuilder()
@@ -267,7 +216,7 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Injects attributes to a class.
+        /// Injects attributes to a class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="expressions">The expressions.</param>
@@ -276,7 +225,9 @@ namespace Proxier.Mappers
         public static Type InjectClassAttributes(this Type type, params Expression<Func<Attribute>>[] expressions)
         {
             if (!type.IsClass)
+            {
                 throw new Exception("Type is not a class, cannot inject.");
+            }
 
 
             var typeBuilder =
@@ -293,35 +244,15 @@ namespace Proxier.Mappers
             }
 
             foreach (var expression in expressions)
+            {
                 typeBuilder.SetCustomAttribute(expression);
+            }
 
             return typeBuilder.CreateTypeInfo().AsType();
         }
 
         /// <summary>
-        ///     Gets all base types.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns></returns>
-        public static IEnumerable<Type> GetAllBaseTypes(this Type type)
-        {
-            if (type == null || type.BaseType == null)
-                return new List<Type> {type};
-
-            var returnList = type.GetInterfaces().ToList();
-
-            var currentBaseType = type.BaseType;
-            while (currentBaseType != null)
-            {
-                returnList.Add(currentBaseType);
-                currentBaseType = currentBaseType.BaseType;
-            }
-
-            return returnList;
-        }
-
-        /// <summary>
-        ///     Injects the property attributes.
+        /// Injects the property attributes.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="propInfo">The property information.</param>
@@ -335,12 +266,14 @@ namespace Proxier.Mappers
                 ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".proxied", TypeAttributes.Public, type);
             var custNamePropBldr = propInfo.Name.CreateProperty(typeBuilder, propInfo.PropertyType);
             foreach (var expression in expressions)
+            {
                 custNamePropBldr.SetCustomAttribute(expression);
+            }
             return typeBuilder.CreateTypeInfo().AsType();
         }
 
         /// <summary>
-        ///     Inject a new property into a type
+        /// Inject a new property into a type
         /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
@@ -356,7 +289,7 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Create a property on a typeBuilder
+        /// Create a property on a typeBuilder
         /// </summary>
         /// <param name="name"></param>
         /// <param name="typeBuilder"></param>
@@ -392,7 +325,7 @@ namespace Proxier.Mappers
                 typeBuilder.DefineMethod($"set_{name}",
                     getSetAttr,
                     null,
-                    new[] {propertyType});
+                    new[] { propertyType });
 
             var custNameSetIl = custNameSetPropMthdBldr.GetILGenerator();
             custNameSetIl.Emit(OpCodes.Ldarg_0);
@@ -405,7 +338,7 @@ namespace Proxier.Mappers
         }
 
         /// <summary>
-        ///     Get a propertyInfo using lambdas.
+        /// Get a propertyInfo using lambdas.
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TProperty"></typeparam>
@@ -419,18 +352,24 @@ namespace Proxier.Mappers
             var type = typeof(TSource);
 
             if (!(propertyLambda.Body is MemberExpression member))
+            {
                 throw new ArgumentException(
                     $"Expression '{propertyLambda}' refers to a method, not a property.");
+            }
 
             var propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
+            {
                 throw new ArgumentException(
                     $"Expression '{propertyLambda}' refers to a field, not a property.");
+            }
 
             if (type != propInfo.ReflectedType &&
                 !type.IsSubclassOf(propInfo.ReflectedType))
+            {
                 throw new ArgumentException(
                     $"Expresion '{propertyLambda}' refers to a property that is not from type {type}.");
+            }
 
             return propInfo;
         }
