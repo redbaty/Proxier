@@ -43,14 +43,11 @@ namespace Proxier.Mappers.Maps
                 return;
             }
 
-            TypesOverrides.Clear();
-
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetLoadableTypes()).Where(i =>
                 i.IsClass && !i.ContainsGenericParameters && i.IsSubclassOf(typeof(T))).ToList();
 
             var mappers = types.Where(i => i.HasParameterlessContructor())
                 .Select(Activator.CreateInstance).OfType<T>()
-                .Where(i => i != null)
                 .ToList();
 
             foreach (var mapper in mappers)
@@ -63,8 +60,6 @@ namespace Proxier.Mappers.Maps
 
                 if (!TypesOverrides.ContainsKey(mapper.BaseType))
                     TypesOverrides.Add(mapper.BaseType, mapper);
-                else
-                    TypesOverrides[mapper.BaseType].Merge(mapper);
             }
         }
     }
