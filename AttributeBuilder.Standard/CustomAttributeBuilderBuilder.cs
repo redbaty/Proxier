@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 namespace AttributeBuilder.Standard
 {
     /// <summary>
-    /// Able to create a CustomAttributeBuilder instance from a lambda expression.
+    ///     Able to create a CustomAttributeBuilder instance from a lambda expression.
     /// </summary>
     internal class CustomAttributeBuilderBuilder
     {
@@ -20,17 +20,17 @@ namespace AttributeBuilder.Standard
         protected ConstructorInfo Constructor;
 
         /// <summary>
-        /// Creates a CustomAttributeBuilder object based on a lambda expression,
-        /// matching the type of attribute, the constructor and its arguments and
-        /// the named parameters.
+        ///     Creates a CustomAttributeBuilder object based on a lambda expression,
+        ///     matching the type of attribute, the constructor and its arguments and
+        ///     the named parameters.
         /// </summary>
         /// <param name="expression">
-        /// A lamda expression of type Expression.New or
-        /// Expression.MemberInit.
+        ///     A lamda expression of type Expression.New or
+        ///     Expression.MemberInit.
         /// </param>
         /// <returns>
-        /// A CustomAttributeBuilder with the same properties as the attribute
-        /// constructed in the lambda expression.
+        ///     A CustomAttributeBuilder with the same properties as the attribute
+        ///     constructed in the lambda expression.
         /// </returns>
         public CustomAttributeBuilder Build(Expression<Func<Attribute>> expression)
         {
@@ -46,10 +46,10 @@ namespace AttributeBuilder.Standard
             switch (expression.Body.NodeType)
             {
                 case ExpressionType.MemberInit:
-                    ProcessMemberInit((MemberInitExpression)expression.Body);
+                    ProcessMemberInit((MemberInitExpression) expression.Body);
                     break;
                 case ExpressionType.New:
-                    ProcessNew((NewExpression)expression.Body);
+                    ProcessNew((NewExpression) expression.Body);
                     break;
                 default:
                     throw new ArgumentException(Resources.UnSupportedExpression, nameof(expression));
@@ -66,18 +66,18 @@ namespace AttributeBuilder.Standard
 
             foreach (var binding in bindings)
             {
-                var memberAssignment = (MemberAssignment)binding;
+                var memberAssignment = (MemberAssignment) binding;
                 var lambda = Expression.Lambda(memberAssignment.Expression);
                 var value = lambda.Compile().DynamicInvoke();
 
                 if (memberAssignment.Member is PropertyInfo)
                 {
-                    _namedProperties.Add((PropertyInfo)memberAssignment.Member);
+                    _namedProperties.Add((PropertyInfo) memberAssignment.Member);
                     _propertyValues.Add(value);
                 }
                 else if (memberAssignment.Member is FieldInfo)
                 {
-                    _namedFields.Add((FieldInfo)memberAssignment.Member);
+                    _namedFields.Add((FieldInfo) memberAssignment.Member);
                     _fieldValues.Add(value);
                 }
             }

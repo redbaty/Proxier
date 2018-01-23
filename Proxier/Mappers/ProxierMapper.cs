@@ -7,18 +7,18 @@ using Proxier.Extensions;
 namespace Proxier.Mappers.Maps
 {
     /// <summary>
-    /// Proxier manager
+    ///     Proxier manager
     /// </summary>
     public static class ProxierMapper
     {
         /// <summary>
-        /// Global mapping overrides
+        ///     Global mapping overrides
         /// </summary>
         public static Dictionary<Type, AttributeMapper> TypesOverrides { get; } =
             new Dictionary<Type, AttributeMapper>();
 
         /// <summary>
-        /// Initializes the mapper classes (AttributeMapper).
+        ///     Initializes the mapper classes (AttributeMapper).
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         public static void InitializeMapperClasses(IKernel kernel = null)
@@ -27,7 +27,7 @@ namespace Proxier.Mappers.Maps
         }
 
         /// <summary>
-        /// Initializes the mapper classes from a certain type.
+        ///     Initializes the mapper classes from a certain type.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         public static void InitializeMapperClasses<T>(IKernel kernel = null) where T : AttributeMapper

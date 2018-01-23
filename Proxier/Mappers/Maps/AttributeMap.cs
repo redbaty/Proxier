@@ -7,7 +7,7 @@ namespace Proxier.Mappers.Maps
 {
     /// <inheritdoc />
     /// <summary>
-    /// The mapper class
+    ///     The mapper class
     /// </summary>
     public class AttributeMap : IPropertyMap
     {
@@ -17,7 +17,7 @@ namespace Proxier.Mappers.Maps
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AttributeMap" /> class.
+        ///     Initializes a new instance of the <see cref="AttributeMap" /> class.
         /// </summary>
         /// <param name="parent">The parent.</param>
         /// <exception cref="ArgumentNullException">parent</exception>
@@ -27,21 +27,21 @@ namespace Proxier.Mappers.Maps
         }
 
         /// <summary>
-        /// This mapper property info
+        ///     This mapper property info
         /// </summary>
         public PropertyInfo PropertyInfo { get; set; }
 
         /// <summary>
-        /// This mapper attribute expression
+        ///     This mapper attribute expression
         /// </summary>
         public Expression<Func<Attribute>>[] Attributes { get; set; }
 
         /// <inheritdoc />
         /// <summary>
-        /// Gets or sets the parent.
+        ///     Gets or sets the parent.
         /// </summary>
         /// <value>
-        /// The parent.
+        ///     The parent.
         /// </value>
         public AttributeMapper Parent { get; }
     }

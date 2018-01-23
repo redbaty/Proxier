@@ -7,30 +7,26 @@ using Proxier.Mappers.Maps;
 namespace Proxier.Extensions
 {
     /// <summary>
-    /// Fluent mapper extensions
+    ///     Fluent mapper extensions
     /// </summary>
     public static class FluentExtensions
     {
         /// <summary>
-        /// Adds or merge to the global type overrides.
+        ///     Adds or merge to the global type overrides.
         /// </summary>
         /// <param name="result">The result.</param>
         /// <returns></returns>
         public static FluentResult AddOrMerge(this FluentResult result)
         {
             if (ProxierMapper.TypesOverrides.ContainsKey(result.AttributeMapper.BaseType))
-            {
                 ProxierMapper.TypesOverrides[result.AttributeMapper.BaseType].Merge(result.AttributeMapper);
-            }
             else
-            {
                 ProxierMapper.TypesOverrides.Add(result.AttributeMapper.BaseType, result.AttributeMapper);
-            }
             return result;
         }
 
         /// <summary>
-        /// Adds a property to this object
+        ///     Adds a property to this object
         /// </summary>
         /// <param name="item"></param>
         /// <param name="name"></param>
@@ -49,7 +45,7 @@ namespace Proxier.Extensions
 
 
         /// <summary>
-        /// Adds a class attribute.
+        ///     Adds a class attribute.
         /// </summary>
         /// <param name="fluentResult">The fluent result.</param>
         /// <param name="attributes">The attributes.</param>
@@ -59,12 +55,12 @@ namespace Proxier.Extensions
         {
             var mapper = fluentResult.Object.GetType().GetMapper() ??
                          new AttributeMapper(fluentResult.Object.GetType());
-            mapper.AttributeMappings.Add(new AttributeMap(mapper) { PropertyInfo = null, Attributes = attributes });
+            mapper.AttributeMappings.Add(new AttributeMap(mapper) {PropertyInfo = null, Attributes = attributes});
             return new FluentResult(mapper.Spawn(), attributeMapper: mapper);
         }
 
         /// <summary>
-        /// Adds a property attribute.
+        ///     Adds a property attribute.
         /// </summary>
         /// <param name="fluentResult">The fluent result.</param>
         /// <param name="attributes">The attributes.</param>
@@ -76,7 +72,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Adds a property attribute.
+        ///     Adds a property attribute.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="item">The item.</param>
@@ -98,12 +94,12 @@ namespace Proxier.Extensions
     }
 
     /// <summary>
-    /// Represents a result from Fluent extensions
+    ///     Represents a result from Fluent extensions
     /// </summary>
     public class FluentResult
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FluentResult" /> class.
+        ///     Initializes a new instance of the <see cref="FluentResult" /> class.
         /// </summary>
         /// <param name="o">The o.</param>
         /// <param name="propertyInfo">The property information.</param>
@@ -119,34 +115,34 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Gets the object.
+        ///     Gets the object.
         /// </summary>
         /// <value>
-        /// The object.
+        ///     The object.
         /// </value>
         public object Object { get; }
 
         /// <summary>
-        /// Gets the attribute mapper.
+        ///     Gets the attribute mapper.
         /// </summary>
         /// <value>
-        /// The attribute mapper.
+        ///     The attribute mapper.
         /// </value>
         public AttributeMapper AttributeMapper { get; }
 
         /// <summary>
-        /// Gets the property information.
+        ///     Gets the property information.
         /// </summary>
         /// <value>
-        /// The property information.
+        ///     The property information.
         /// </value>
         public PropertyInfo PropertyInfo { get; }
 
         /// <summary>
-        /// Gets a value indicating whether [save as global].
+        ///     Gets a value indicating whether [save as global].
         /// </summary>
         /// <value>
-        /// <c>true</c> if [save as global]; otherwise, <c>false</c>.
+        ///     <c>true</c> if [save as global]; otherwise, <c>false</c>.
         /// </value>
         public bool SaveAsGlobal { get; }
     }

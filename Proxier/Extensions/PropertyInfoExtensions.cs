@@ -7,12 +7,12 @@ using Proxier.Mappers;
 namespace Proxier.Extensions
 {
     /// <summary>
-    /// Property info extensions
+    ///     Property info extensions
     /// </summary>
     public static class PropertyInfoExtensions
     {
         /// <summary>
-        /// Get the last property from a type based on a name.
+        ///     Get the last property from a type based on a name.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
@@ -24,10 +24,7 @@ namespace Proxier.Extensions
                 var property = type.GetProperty(name, BindingFlags.DeclaredOnly |
                                                       BindingFlags.Public |
                                                       BindingFlags.Instance);
-                if (property != null)
-                {
-                    return property;
-                }
+                if (property != null) return property;
                 type = type.BaseType;
             }
 
@@ -35,7 +32,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Gets the highest property value.
+        ///     Gets the highest property value.
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <param name="property">The property.</param>
@@ -46,14 +43,14 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Get all properties, keeping the token position.
+        ///     Get all properties, keeping the token position.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         public static IEnumerable<PropertyWrapper> GetHighestProperties(this Type type)
         {
             return type.GetProperties(BindingFlags.Public | BindingFlags.Instance).GroupBy(i => i.Name)
-                .Select(i => new PropertyWrapper { PropertyInfo = i.First(), Token = i.Last().MetadataToken });
+                .Select(i => new PropertyWrapper {PropertyInfo = i.First(), Token = i.Last().MetadataToken});
         }
     }
 }

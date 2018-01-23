@@ -7,7 +7,7 @@ namespace Proxier.Extensions
     public static partial class MapperExtensions
     {
         /// <summary>
-        /// Copies object to another object using reflection.
+        ///     Copies object to another object using reflection.
         /// </summary>
         /// <param name="baseClassInstance">The base class instance.</param>
         /// <param name="target">The target.</param>
@@ -15,28 +15,23 @@ namespace Proxier.Extensions
         public static object CopyTo(this object baseClassInstance, object target)
         {
             foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
-            {
                 try
                 {
                     var value = propertyInfo.GetValue(baseClassInstance, null);
                     var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
 
-                    if (null != value)
-                    {
-                        highEquiv.SetValue(target, value, null);
-                    }
+                    if (null != value) highEquiv.SetValue(target, value, null);
                 }
                 catch
                 {
                     // ignored
                 }
-            }
 
             return target;
         }
 
         /// <summary>
-        /// Copies object to another object of a type using reflection.
+        ///     Copies object to another object of a type using reflection.
         /// </summary>
         /// <param name="baseClassInstance">The base class instance.</param>
         /// <param name="targetType">The type to copy to.</param>
@@ -46,28 +41,23 @@ namespace Proxier.Extensions
             var target = Activator.CreateInstance(targetType.AddParameterlessConstructor());
 
             foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
-            {
                 try
                 {
                     var value = propertyInfo.GetValue(baseClassInstance, null);
                     var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
 
-                    if (null != value)
-                    {
-                        highEquiv.SetValue(target, value, null);
-                    }
+                    if (null != value) highEquiv.SetValue(target, value, null);
                 }
                 catch
                 {
                     // ignored
                 }
-            }
 
             return target;
         }
 
         /// <summary>
-        /// Returns if a certain type contains a override
+        ///     Returns if a certain type contains a override
         /// </summary>
         /// <param name="item"></param>
         /// <typeparam name="T"></typeparam>
@@ -79,7 +69,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Gets all the properties values, the key being its name.
+        ///     Gets all the properties values, the key being its name.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -90,7 +80,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Gets if type has a parameterless constructor
+        ///     Gets if type has a parameterless constructor
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -107,16 +97,13 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Gets all base types.
+        ///     Gets all base types.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
         public static IEnumerable<Type> GetAllBaseTypes(this Type type)
         {
-            if (type == null || type.BaseType == null)
-            {
-                return new List<Type> { type };
-            }
+            if (type == null || type.BaseType == null) return new List<Type> {type};
 
             var returnList = type.GetInterfaces().ToList();
 

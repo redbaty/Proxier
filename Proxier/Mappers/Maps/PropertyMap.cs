@@ -5,12 +5,12 @@ using Proxier.Interfaces;
 namespace Proxier.Mappers.Maps
 {
     /// <summary>
-    /// Describes a property mappings
+    ///     Describes a property mappings
     /// </summary>
     public class PropertyMap : IPropertyMap
     {
         /// <summary>
-        /// Creates a new property
+        ///     Creates a new property
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="name"></param>
@@ -23,23 +23,23 @@ namespace Proxier.Mappers.Maps
         }
 
         /// <summary>
-        /// Property name
+        ///     Property name
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The property type
+        ///     The property type
         /// </summary>
         public Type PropertyType { get; set; }
 
         /// <summary>
-        /// The parent mapper
+        ///     The parent mapper
         /// </summary>
         public AttributeMapper Parent { get; }
 
         /// <inheritdoc />
         /// <summary>
-        /// This mapper attribute expression
+        ///     This mapper attribute expression
         /// </summary>
         public Expression<Func<Attribute>>[] Attributes { get; set; } = new Expression<Func<Attribute>>[0];
     }

@@ -5,20 +5,20 @@ using Proxier.Mappers;
 namespace Proxier.Interfaces
 {
     /// <summary>
-    /// Represents a mapper
+    ///     Represents a mapper
     /// </summary>
     public interface IPropertyMap
     {
         /// <summary>
-        /// Gets or sets the parent.
+        ///     Gets or sets the parent.
         /// </summary>
         /// <value>
-        /// The parent.
+        ///     The parent.
         /// </value>
         AttributeMapper Parent { get; }
 
         /// <summary>
-        /// Property attributes
+        ///     Property attributes
         /// </summary>
         Expression<Func<Attribute>>[] Attributes { get; set; }
     }

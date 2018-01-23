@@ -11,19 +11,19 @@ using Proxier.Mappers.Maps;
 namespace Proxier.Extensions
 {
     /// <summary>
-    /// Mapper extensions
+    ///     Mapper extensions
     /// </summary>
     public static partial class MapperExtensions
     {
         /// <summary>
-        /// The proxier dynamic assembly name
+        ///     The proxier dynamic assembly name
         /// </summary>
         public const string DynamicNamespace = "Proxier.Proxied";
 
         private static ModuleBuilder moduleBuilder;
 
         /// <summary>
-        /// Injected types cache
+        ///     Injected types cache
         /// </summary>
         private static Dictionary<Type, AttributeMapper> InjectedCache { get; } =
             new Dictionary<Type, AttributeMapper>();
@@ -32,53 +32,41 @@ namespace Proxier.Extensions
         {
             get
             {
-                if (moduleBuilder == null)
-                {
-                    moduleBuilder = GetModuleBuilder();
-                }
+                if (moduleBuilder == null) moduleBuilder = GetModuleBuilder();
 
                 return moduleBuilder;
             }
         }
 
         /// <summary>
-        /// Gets the a injected version of a object.
+        ///     Gets the a injected version of a object.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj">The object.</param>
         /// <returns></returns>
         public static T GetInjectedObject<T>(this T obj) where T : class
         {
-            if (obj == null)
-            {
-                return null;
-            }
+            if (obj == null) return null;
 
-            if (!ProxierMapper.TypesOverrides.ContainsKey(obj.GetType()))
-            {
-                return obj;
-            }
-            return (T)obj.CopyTo(obj.GetType().GetMapper().Spawn());
+            if (!ProxierMapper.TypesOverrides.ContainsKey(obj.GetType())) return obj;
+            return (T) obj.CopyTo(obj.GetType().GetMapper().Spawn());
         }
 
         /// <summary>
-        /// Finds a parent mapper from a type.
+        ///     Finds a parent mapper from a type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
         public static T GetMapper<T>(this Type type) where T : AttributeMapper
         {
-            if (ProxierMapper.TypesOverrides.ContainsKey(type))
-            {
-                return (T)ProxierMapper.TypesOverrides[type];
-            }
+            if (ProxierMapper.TypesOverrides.ContainsKey(type)) return (T) ProxierMapper.TypesOverrides[type];
 
             var injType = type.GetAllBaseTypes()
                 .FirstOrDefault(allBaseType => ProxierMapper.TypesOverrides.ContainsKey(allBaseType));
 
             try
             {
-                return (T)(injType != null ? ProxierMapper.TypesOverrides[injType] : null);
+                return (T) (injType != null ? ProxierMapper.TypesOverrides[injType] : null);
             }
             catch
             {
@@ -87,7 +75,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Finds a parent mapper from a type.
+        ///     Finds a parent mapper from a type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
@@ -97,7 +85,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Gets the injected version of a type
+        ///     Gets the injected version of a type
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="amapper"></param>
@@ -106,25 +94,16 @@ namespace Proxier.Extensions
         public static Type GetInjectedType(this Type type, AttributeMapper amapper = null, bool ignoreCache = false)
         {
             var mapper = amapper ?? type.GetMapper();
-            if (mapper == null)
-            {
-                return type;
-            }
+            if (mapper == null) return type;
 
             if (InjectedCache.ContainsKey(mapper.BaseType) && !ignoreCache)
-            {
                 if (InjectedCache[mapper.BaseType].AttributeMappings.Count != mapper.AttributeMappings.Count)
-                {
                     InjectedCache.Remove(mapper.BaseType);
-                }
                 else
-                {
                     return InjectedCache[mapper.BaseType].Type;
-                }
-            }
 
             var customProperties = mapper.CustomProperties.GroupBy(i => i.Name).Select(i =>
-                new { Name = i.Key, Attributes = i.SelectMany(o => o.Attributes).ToArray(), i.First().PropertyType });
+                new {Name = i.Key, Attributes = i.SelectMany(o => o.Attributes).ToArray(), i.First().PropertyType});
 
             foreach (var customProperty in customProperties)
             {
@@ -141,54 +120,36 @@ namespace Proxier.Extensions
                         i.First().PropertyInfo
                     }).ToList();
 
-            if (!props.Any())
-            {
-                return type;
-            }
-
             type = props.Aggregate(type,
                 (current, expression) =>
                     current.InjectPropertyAttributes(expression.PropertyInfo, expression.Expressions.ToArray()));
 
             mapper.Type = type;
 
-
             if (mapper.AttributeMappings.Any(i => i.PropertyInfo == null))
-            {
                 mapper.Type = mapper.AttributeMappings.Where(i => i.PropertyInfo == null).Aggregate(type,
                     (current, expression) => current.InjectClassAttributes(expression.Attributes));
-            }
 
             if (InjectedCache.ContainsKey(mapper.BaseType))
-            {
                 InjectedCache[mapper.BaseType] = mapper;
-            }
             else
-            {
                 InjectedCache.Add(mapper.BaseType, mapper);
-            }
 
             return mapper.Type;
         }
 
         /// <summary>
-        /// Adds a parameterless constructor.
+        ///     Adds a parameterless constructor.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
         public static Type AddParameterlessConstructor(this Type type)
         {
-            if (type == null)
-            {
-                return null;
-            }
+            if (type == null) return null;
 
             var constructor = type.GetConstructor(Type.EmptyTypes);
 
-            if (constructor != null)
-            {
-                return type;
-            }
+            if (constructor != null) return type;
 
             var typeBuilder = ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".parameterless",
                 TypeAttributes.Public, type);
@@ -203,7 +164,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Generate a module builder.
+        ///     Generate a module builder.
         /// </summary>
         /// <returns></returns>
         private static ModuleBuilder GetModuleBuilder()
@@ -216,7 +177,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Injects attributes to a class.
+        ///     Injects attributes to a class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="expressions">The expressions.</param>
@@ -224,10 +185,7 @@ namespace Proxier.Extensions
         /// <exception cref="Exception">Type is not a class, cannot inject.</exception>
         public static Type InjectClassAttributes(this Type type, params Expression<Func<Attribute>>[] expressions)
         {
-            if (!type.IsClass)
-            {
-                throw new Exception("Type is not a class, cannot inject.");
-            }
+            if (!type.IsClass) throw new Exception("Type is not a class, cannot inject.");
 
 
             var typeBuilder =
@@ -243,16 +201,13 @@ namespace Proxier.Extensions
                 cGen.Emit(OpCodes.Ret);
             }
 
-            foreach (var expression in expressions)
-            {
-                typeBuilder.SetCustomAttribute(expression);
-            }
+            foreach (var expression in expressions) typeBuilder.SetCustomAttribute(expression);
 
             return typeBuilder.CreateTypeInfo().AsType();
         }
 
         /// <summary>
-        /// Injects the property attributes.
+        ///     Injects the property attributes.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="propInfo">The property information.</param>
@@ -265,15 +220,12 @@ namespace Proxier.Extensions
             var typeBuilder =
                 ModuleBuilder.DefineType(Nanoid.Nanoid.Generate() + ".proxied", TypeAttributes.Public, type);
             var custNamePropBldr = propInfo.Name.CreateProperty(typeBuilder, propInfo.PropertyType);
-            foreach (var expression in expressions)
-            {
-                custNamePropBldr.SetCustomAttribute(expression);
-            }
+            foreach (var expression in expressions) custNamePropBldr.SetCustomAttribute(expression);
             return typeBuilder.CreateTypeInfo().AsType();
         }
 
         /// <summary>
-        /// Inject a new property into a type
+        ///     Inject a new property into a type
         /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
@@ -289,7 +241,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Create a property on a typeBuilder
+        ///     Create a property on a typeBuilder
         /// </summary>
         /// <param name="name"></param>
         /// <param name="typeBuilder"></param>
@@ -325,7 +277,7 @@ namespace Proxier.Extensions
                 typeBuilder.DefineMethod($"set_{name}",
                     getSetAttr,
                     null,
-                    new[] { propertyType });
+                    new[] {propertyType});
 
             var custNameSetIl = custNameSetPropMthdBldr.GetILGenerator();
             custNameSetIl.Emit(OpCodes.Ldarg_0);
@@ -338,7 +290,7 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
-        /// Get a propertyInfo using lambdas.
+        ///     Get a propertyInfo using lambdas.
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TProperty"></typeparam>
@@ -352,24 +304,18 @@ namespace Proxier.Extensions
             var type = typeof(TSource);
 
             if (!(propertyLambda.Body is MemberExpression member))
-            {
                 throw new ArgumentException(
                     $"Expression '{propertyLambda}' refers to a method, not a property.");
-            }
 
             var propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
-            {
                 throw new ArgumentException(
                     $"Expression '{propertyLambda}' refers to a field, not a property.");
-            }
 
             if (type != propInfo.ReflectedType &&
                 !type.IsSubclassOf(propInfo.ReflectedType))
-            {
                 throw new ArgumentException(
                     $"Expresion '{propertyLambda}' refers to a property that is not from type {type}.");
-            }
 
             return propInfo;
         }
