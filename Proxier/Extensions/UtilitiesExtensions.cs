@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Proxier.Extensions
 {
@@ -11,13 +12,17 @@ namespace Proxier.Extensions
         /// </summary>
         /// <param name="baseClassInstance">The base class instance.</param>
         /// <param name="target">The target.</param>
+        /// <param name="interceptor"></param>
         /// <returns></returns>
-        public static object CopyTo(this object baseClassInstance, object target)
+        public static object CopyTo(this object baseClassInstance, object target,
+            Func<PropertyInfo, object, object, object> interceptor = null)
         {
+            interceptor = interceptor ?? ((info, t1, o) => info.GetValue(o));
+
             foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
                 try
                 {
-                    var value = propertyInfo.GetValue(baseClassInstance, null);
+                    var value = interceptor.Invoke(propertyInfo, target, baseClassInstance);
                     var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
 
                     if (null != value) highEquiv.SetValue(target, value, null);
@@ -39,21 +44,7 @@ namespace Proxier.Extensions
         public static object CopyTo(this object baseClassInstance, Type targetType)
         {
             var target = Activator.CreateInstance(targetType.AddParameterlessConstructor());
-
-            foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
-                try
-                {
-                    var value = propertyInfo.GetValue(baseClassInstance, null);
-                    var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
-
-                    if (null != value) highEquiv.SetValue(target, value, null);
-                }
-                catch
-                {
-                    // ignored
-                }
-
-            return target;
+            return baseClassInstance.CopyTo(target);
         }
 
         /// <summary>
