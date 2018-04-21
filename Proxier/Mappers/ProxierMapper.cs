@@ -4,7 +4,7 @@ using System.Linq;
 using Ninject;
 using Proxier.Extensions;
 
-namespace Proxier.Mappers.Maps
+namespace Proxier.Mappers
 {
     /// <summary>
     ///     Proxier manager

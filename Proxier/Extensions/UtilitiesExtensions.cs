@@ -2,30 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LazyCache;
 
 namespace Proxier.Extensions
 {
     public static partial class MapperExtensions
     {
+        private static readonly IAppCache Cache = new CachingService();
+
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
         /// <param name="baseClassInstance">The base class instance.</param>
         /// <param name="target">The target.</param>
+        /// <param name="ignoreNulls"></param>
         /// <param name="interceptor"></param>
         /// <returns></returns>
         public static object CopyTo(this object baseClassInstance, object target,
-            Func<PropertyInfo, object, object, object> interceptor = null)
+            bool ignoreNulls = true, Func<PropertyInfo, object, object, object> interceptor = null)
         {
             interceptor = interceptor ?? ((info, t1, o) => info.GetValue(o));
 
-            foreach (var propertyInfo in baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo))
+            var sourceProperties = Cache.GetOrAdd($"pCopy->{baseClassInstance.GetType().FullName}",
+                () => baseClassInstance.GetType().GetHighestProperties().Select(i => i.PropertyInfo));
+
+            foreach (var propertyInfo in sourceProperties)
                 try
                 {
                     var value = interceptor.Invoke(propertyInfo, target, baseClassInstance);
-                    var highEquiv = target.GetType().GetHighestProperty(propertyInfo.Name);
 
-                    if (null != value) highEquiv.SetValue(target, value, null);
+                    var targetProperties = Cache.GetOrAdd($"pCopy->{target.GetType().FullName}->Properties",
+                        () => target.GetType().GetHighestProperties().ToDictionary(i => i.PropertyInfo.Name));
+
+                    if (ignoreNulls && value == null)
+                        continue;
+
+                    targetProperties[propertyInfo.Name].PropertyInfo.SetValue(target, value);
                 }
                 catch
                 {
@@ -40,11 +52,14 @@ namespace Proxier.Extensions
         /// </summary>
         /// <param name="baseClassInstance">The base class instance.</param>
         /// <param name="targetType">The type to copy to.</param>
+        /// <param name="ignoreNulls"></param>
+        /// <param name="interceptor"></param>
         /// <returns></returns>
-        public static object CopyTo(this object baseClassInstance, Type targetType)
+        public static object CopyTo(this object baseClassInstance, Type targetType, bool ignoreNulls = true,
+            Func<PropertyInfo, object, object, object> interceptor = null)
         {
-            var target = Activator.CreateInstance(targetType.AddParameterlessConstructor());
-            return baseClassInstance.CopyTo(target);
+            return baseClassInstance.CopyTo(Activator.CreateInstance(targetType.AddParameterlessConstructor()),
+                ignoreNulls, interceptor);
         }
 
         /// <summary>
