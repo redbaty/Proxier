@@ -25,7 +25,7 @@ namespace Proxier.Extensions
             }
             catch (ReflectionTypeLoadException e)
             {
-                return e.Types.Where(type => type != null);
+                return e.Types.Where(t => t != null);
             }
         }
     }
