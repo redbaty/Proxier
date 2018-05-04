@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using Proxier.Mappers;
 
 namespace Proxier.Extensions
 {
@@ -40,17 +37,6 @@ namespace Proxier.Extensions
         public static object GetHighestPropertyValue(this object obj, string property)
         {
             return obj.GetType().GetHighestProperty(property).GetValue(obj, null);
-        }
-
-        /// <summary>
-        ///     Get all properties, keeping the token position.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static IEnumerable<PropertyWrapper> GetHighestProperties(this Type type)
-        {
-            return type.GetProperties(BindingFlags.Public | BindingFlags.Instance).GroupBy(i => i.Name)
-                .Select(i => new PropertyWrapper {PropertyInfo = i.First(), Token = i.Last().MetadataToken});
         }
     }
 }
