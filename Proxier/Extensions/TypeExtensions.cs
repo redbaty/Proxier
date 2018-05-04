@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -43,7 +42,8 @@ namespace Proxier.Extensions
         /// <param name="target">The target.</param>
         /// <param name="propertiesToIgnore"></param>
         /// <returns></returns>
-        public static void CopyTo<TSource, TProperty>(this TSource source, object target, params Expression<Func<TSource, TProperty>>[] propertiesToIgnore)
+        public static void CopyTo<TSource, TProperty>(this TSource source, object target,
+            params Expression<Func<TSource, TProperty>>[] propertiesToIgnore)
         {
             CopyTo(source, target, new CopyToOptions
             {
@@ -51,27 +51,28 @@ namespace Proxier.Extensions
             });
         }
 
-        private static PropertyInfo ValidateProperty<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda)
+        private static PropertyInfo ValidateProperty<TSource, TProperty>(
+            Expression<Func<TSource, TProperty>> propertyLambda)
         {
-            Type type = typeof(TSource);
+            var type = typeof(TSource);
 
-            MemberExpression member = propertyLambda.Body as MemberExpression;
+            var member = propertyLambda.Body as MemberExpression;
             if (member == null)
                 throw new ArgumentException(string.Format(
                     "Expression '{0}' refers to a method, not a property.",
-                    propertyLambda.ToString()));
+                    propertyLambda));
 
-            PropertyInfo propInfo = member.Member as PropertyInfo;
+            var propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
                 throw new ArgumentException(string.Format(
                     "Expression '{0}' refers to a field, not a property.",
-                    propertyLambda.ToString()));
+                    propertyLambda));
 
             if (type != propInfo.ReflectedType &&
                 !type.IsSubclassOf(propInfo.ReflectedType))
                 throw new ArgumentException(string.Format(
                     "Expression '{0}' refers to a property that is not from type {1}.",
-                    propertyLambda.ToString(),
+                    propertyLambda,
                     type));
 
             return propInfo;
@@ -141,7 +142,7 @@ namespace Proxier.Extensions
         /// <returns></returns>
         public static IEnumerable<Type> GetAllBaseTypes(this Type type)
         {
-            if (type == null || type.BaseType == null) return new List<Type> { type };
+            if (type == null || type.BaseType == null) return new List<Type> {type};
 
             var returnList = type.GetInterfaces().ToList();
 
