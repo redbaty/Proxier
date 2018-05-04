@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using LazyCache;
 
@@ -35,6 +37,47 @@ namespace Proxier.Extensions
         }
 
         /// <summary>
+        ///     Copies object to another object ignoring some properties.
+        /// </summary>
+        /// <param name="source">The base class instance.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="propertiesToIgnore"></param>
+        /// <returns></returns>
+        public static void CopyTo<TSource, TProperty>(this TSource source, object target, params Expression<Func<TSource, TProperty>>[] propertiesToIgnore)
+        {
+            CopyTo(source, target, new CopyToOptions
+            {
+                PropertiesToIgnore = propertiesToIgnore.Select(i => ValidateProperty(i)).Distinct()
+            });
+        }
+
+        private static PropertyInfo ValidateProperty<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda)
+        {
+            Type type = typeof(TSource);
+
+            MemberExpression member = propertyLambda.Body as MemberExpression;
+            if (member == null)
+                throw new ArgumentException(string.Format(
+                    "Expression '{0}' refers to a method, not a property.",
+                    propertyLambda.ToString()));
+
+            PropertyInfo propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+                throw new ArgumentException(string.Format(
+                    "Expression '{0}' refers to a field, not a property.",
+                    propertyLambda.ToString()));
+
+            if (type != propInfo.ReflectedType &&
+                !type.IsSubclassOf(propInfo.ReflectedType))
+                throw new ArgumentException(string.Format(
+                    "Expression '{0}' refers to a property that is not from type {1}.",
+                    propertyLambda.ToString(),
+                    type));
+
+            return propInfo;
+        }
+
+        /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
         /// <param name="source">The base class instance.</param>
@@ -55,7 +98,7 @@ namespace Proxier.Extensions
                 $"pCopy->{targetType.FullName}->Properties->{options.IgnoreNulls}",
                 () => GetProperty(!options.CopyPrivates, targetType)).ToDictionary(i => i.Name);
 
-            foreach (var propertyInfo in sourceProperties)
+            foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore))
             {
                 var value = options.Resolver.Invoke(new CopyContext(propertyInfo, source, target));
 
@@ -98,7 +141,7 @@ namespace Proxier.Extensions
         /// <returns></returns>
         public static IEnumerable<Type> GetAllBaseTypes(this Type type)
         {
-            if (type == null || type.BaseType == null) return new List<Type> {type};
+            if (type == null || type.BaseType == null) return new List<Type> { type };
 
             var returnList = type.GetInterfaces().ToList();
 

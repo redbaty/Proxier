@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Proxier.Interfaces;
 
 namespace Proxier.Extensions
@@ -19,6 +21,12 @@ namespace Proxier.Extensions
         /// </summary>
         /// <returns></returns>
         public bool IgnoreNulls { get; set; }
+
+        /// <summary>
+        /// These properties will be ignored when copying.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<PropertyInfo> PropertiesToIgnore { get; set; }
 
         /// <summary>
         /// This will be used to get the value that will be set to a certain property.
