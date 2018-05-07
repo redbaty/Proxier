@@ -4,23 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace Proxier.Builders
+namespace Proxier.Representations
 {
     /// <summary>
     ///     This is a property's representation
     /// </summary>
     public class PropertyRepresentation
     {
-        private IEnumerable<Expression<Func<Attribute>>> Attributes { get; }
-
-        private IEnumerable<Attribute> CompiledAttributes { get; }
-
-        private bool IsReadOnly { get; }
-
-        private string Name { get; }
-
-        private Type Type { get; }
-
         /// <inheritdoc />
         public PropertyRepresentation(string name, Type type, bool isReadOnly,
             IEnumerable<Expression<Func<Attribute>>> attributes,
@@ -32,6 +22,16 @@ namespace Proxier.Builders
             CompiledAttributes = compiledAttributes;
             IsReadOnly = isReadOnly;
         }
+
+        private IEnumerable<Expression<Func<Attribute>>> Attributes { get; }
+
+        private IEnumerable<Attribute> CompiledAttributes { get; }
+
+        private bool IsReadOnly { get; }
+
+        private string Name { get; }
+
+        private Type Type { get; }
 
         /// <inheritdoc />
         public override string ToString()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Proxier.Interfaces;
 
-namespace Proxier.Extensions
+namespace Proxier
 {
     /// <summary>
     ///     Represents copy options

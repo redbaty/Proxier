@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using LazyCache;
+using FluentCache;
+using FluentCache.Simple;
+using Proxier.Contexts;
+using Proxier.Repositories;
 
 namespace Proxier.Extensions
 {
@@ -12,7 +13,12 @@ namespace Proxier.Extensions
     /// </summary>
     public static class TypeExtensions
     {
-        private static readonly IAppCache Cache = new CachingService();
+        static TypeExtensions()
+        {
+            Cache = new FluentDictionaryCache().WithSource(new TypeRepository());
+        }
+
+        private static Cache<TypeRepository> Cache { get; }
 
         /// <summary>
         ///     Copies object to another object using reflection.
@@ -89,15 +95,15 @@ namespace Proxier.Extensions
         {
             var sourceType = source.GetType();
 
-            var sourceProperties = Cache.GetOrAdd(
-                $"pCopy->{sourceType.FullName}->{options.IgnoreNulls}",
-                () => GetProperty(!options.CopyPrivates, sourceType));
+            var ignorePrivate = !options.CopyPrivates;
+
+            var sourceProperties = Cache.Method(r => r.GetProperty(sourceType, ignorePrivate))
+                .GetValue();
 
             var targetType = target.GetType();
 
-            var targetProperties = Cache.GetOrAdd(
-                $"pCopy->{targetType.FullName}->Properties->{options.IgnoreNulls}",
-                () => GetProperty(!options.CopyPrivates, targetType)).ToDictionary(i => i.Name);
+            var targetProperties = Cache.Method(r => r.GetProperty(targetType, ignorePrivate))
+                .GetValue().ToDictionary(i => i.Name);
 
             foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore))
             {
@@ -108,14 +114,6 @@ namespace Proxier.Extensions
 
                 targetProperties[propertyInfo.Name].SetValue(target, value);
             }
-        }
-
-        private static PropertyInfo[] GetProperty(bool ignorePrivate, Type type)
-        {
-            return ignorePrivate
-                ? type.GetProperties()
-                : type
-                    .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         /// <summary>
