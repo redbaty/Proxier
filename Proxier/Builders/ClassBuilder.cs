@@ -4,7 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
+using FluentCache;
+using FluentCache.Simple;
+using Proxier.Repositories;
 
 namespace Proxier.Builders
 {
@@ -14,6 +16,13 @@ namespace Proxier.Builders
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ClassBuilder
     {
+        static ClassBuilder()
+        {
+            Cache = new FluentDictionaryCache().WithSource(new ClassBuilderRepository());
+        }
+
+        private static Cache<ClassBuilderRepository> Cache { get; }
+
         /// <summary>
         ///     Gets the class name.
         /// </summary>
@@ -124,7 +133,7 @@ namespace Proxier.Builders
         ///     Builds this instance into a real type.
         /// </summary>
         /// <returns></returns>
-        public async Task<Type> Build()
+        public Type Build()
         {
             var propertiesBuilt = PropertyBuilders.Select(i => i.Build().ToString()).ToArray();
             var typesInUse = PropertyBuilders.Select(i => i.PropertyType).Concat(PropertyBuilders
@@ -132,15 +141,20 @@ namespace Proxier.Builders
                 .SelectMany(o => o.Attributes.Select(j => j.Compile().Invoke().GetType())));
             var uniqueUsings = typesInUse.Select(o => o.Namespace).Distinct();
 
-            return (await CodeManager.GenerateAssembly(BuildClass(uniqueUsings, propertiesBuilt))).GetTypes()
+            var buildClass = BuildClass(uniqueUsings, propertiesBuilt, Name);
+
+            var generateAssembly =
+                Cache.Method(i => i.GenerateAssembly(buildClass)).GetValue();
+
+            return generateAssembly.GetTypes()
                 .LastOrDefault();
         }
 
-        private string BuildClass(IEnumerable<string> uniqueUsings, string[] propertiesBuilt)
+        private static string BuildClass(IEnumerable<string> uniqueUsings, string[] propertiesBuilt, string name)
         {
             var classRepresentationBuilder = new ClassRepresentationBuilder();
             classRepresentationBuilder.WithUsings(uniqueUsings.ToArray());
-            classRepresentationBuilder.WithName(Name);
+            classRepresentationBuilder.WithName(name);
             classRepresentationBuilder.WithProperties(propertiesBuilt);
             var classResult = classRepresentationBuilder.Build();
             return classResult;

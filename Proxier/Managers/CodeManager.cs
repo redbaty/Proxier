@@ -6,8 +6,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Proxier.Exceptions;
 
-namespace Proxier.Builders
+namespace Proxier.Managers
 {
     internal class CodeManager
     {
@@ -45,7 +46,8 @@ namespace Proxier.Builders
             var compilation = CSharpCompilation.Create(Nanoid.Nanoid.Generate())
                 .WithOptions(
                     new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic)
+                .AddReferences(AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(i => !i.IsDynamic && !string.IsNullOrEmpty(i.Location))
                     .Distinct().Select(i => MetadataReference.CreateFromFile(i.Location)).OrderBy(i => i.FilePath)
                     .ToList())
                 .AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(code));

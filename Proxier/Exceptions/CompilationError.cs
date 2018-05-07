@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
 
-namespace Proxier.Builders
+namespace Proxier.Exceptions
 {
     /// <inheritdoc />
     /// <summary>
@@ -10,6 +10,13 @@ namespace Proxier.Builders
     /// <seealso cref="T:System.Exception" />
     public class CompilationError : Exception
     {
+        /// <inheritdoc />
+        public CompilationError(Diagnostic diagnostic, string message)
+        {
+            Diagnostic = diagnostic;
+            Message = message;
+        }
+
         /// <summary>
         ///     Gets the diagnostic information.
         /// </summary>
@@ -22,12 +29,5 @@ namespace Proxier.Builders
         ///     Gets a message that describes the current exception.
         /// </summary>
         public override string Message { get; }
-
-        /// <inheritdoc />
-        public CompilationError(Diagnostic diagnostic, string message)
-        {
-            Diagnostic = diagnostic;
-            Message = message;
-        }
     }
 }

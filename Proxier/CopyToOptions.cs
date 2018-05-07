@@ -1,7 +1,7 @@
 ﻿using System;
 using Proxier.Interfaces;
 
-namespace Proxier.Extensions
+namespace Proxier
 {
     public class CopyToOptions
     {
