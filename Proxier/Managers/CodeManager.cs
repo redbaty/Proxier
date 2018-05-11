@@ -10,7 +10,7 @@ using Proxier.Exceptions;
 
 namespace Proxier.Managers
 {
-    internal class CodeManager
+    public class CodeManager
     {
         /// <summary>
         ///     Generates an assembly from code.
