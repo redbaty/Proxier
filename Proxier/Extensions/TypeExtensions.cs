@@ -50,17 +50,17 @@ namespace Proxier.Extensions
         /// <param name="target">The target.</param>
         /// <param name="propertiesToIgnore"></param>
         /// <returns></returns>
-        public static void CopyTo<TSource, TProperty>(this TSource source, object target,
-            params Expression<Func<TSource, TProperty>>[] propertiesToIgnore)
+        public static void CopyTo<TSource>(this TSource source, object target,
+            params Expression<Func<TSource, object>>[] propertiesToIgnore)
         {
             CopyTo(source, target, new CopyToOptions
             {
-                PropertiesToIgnore = propertiesToIgnore.Select(i => ValidateProperty(i)).Distinct()
+                PropertiesToIgnore = propertiesToIgnore.Select(ValidateProperty).Distinct()
             });
         }
 
-        private static PropertyInfo ValidateProperty<TSource, TProperty>(
-            Expression<Func<TSource, TProperty>> propertyLambda)
+        private static PropertyInfo ValidateProperty<TSource>(
+            Expression<Func<TSource, object>> propertyLambda)
         {
             var type = typeof(TSource);
 
