@@ -14,12 +14,13 @@ namespace Proxier.Representations
         /// <inheritdoc />
         public PropertyRepresentation(string name, Type type, bool isReadOnly,
             IEnumerable<Expression<Func<Attribute>>> attributes,
-            IEnumerable<Attribute> compiledAttributes)
+            IEnumerable<Attribute> compiledAttributes, bool isInterface)
         {
             Name = name;
             Type = type;
             Attributes = attributes;
             CompiledAttributes = compiledAttributes;
+            IsInterface = isInterface;
             IsReadOnly = isReadOnly;
         }
 
@@ -32,6 +33,8 @@ namespace Proxier.Representations
         private string Name { get; }
 
         private Type Type { get; }
+
+        private bool IsInterface { get; }
 
         /// <inheritdoc />
         public override string ToString()
@@ -46,16 +49,27 @@ namespace Proxier.Representations
                     foreach (var newExpressionArgument in newExpression.Arguments)
                         if (newExpressionArgument is ConstantExpression constantExpression)
                             stringBuilder.AppendLine(
-                                $"\t[{expression.Compile().Invoke()}({$"\"{constantExpression.Value}\""})]");
+                                $"\t[{expression.Compile().Invoke()}(\"{constantExpression.Value}\")]");
                 }
 
             if (CompiledAttributes != null && CompiledAttributes.Any())
                 foreach (var compiledAttribute in CompiledAttributes)
                     stringBuilder.AppendLine($"\t[{compiledAttribute}]");
 
-            stringBuilder.AppendLine($"\tpublic {Type.Name} {Name} {{ get;{(IsReadOnly ? string.Empty : " set;")} }}");
+            stringBuilder.AppendLine($"\t{(IsInterface ? string.Empty : "public ")}{GetResolvedName(Type)} {Name} {{ get;{(IsReadOnly ? string.Empty : " set;")} }}");
 
             return stringBuilder.ToString();
+        }
+
+        private string GetResolvedName(Type type)
+        {
+            return IsSimple(type) ? type.Name.ToLower() : type.Name;
+        }
+
+        private bool IsSimple(Type type)
+        {
+            return type.IsPrimitive
+                   || type == typeof(string);
         }
     }
 }

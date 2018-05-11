@@ -129,33 +129,48 @@ namespace Proxier.Builders
             return this;
         }
 
+        private bool IsInterface { get; set; }
+
+        public ClassBuilder AsInterface()
+        {
+            IsInterface = true;
+            return this;
+        }
+
         /// <summary>
         ///     Builds this instance into a real type.
         /// </summary>
         /// <returns></returns>
         public Type Build()
         {
-            var propertiesBuilt = PropertyBuilders.Select(i => i.Build().ToString()).ToArray();
+            var propertiesBuilt = PropertyBuilders.Select(i =>
+            {
+                if (IsInterface)
+                    i.AsInterface();
+
+                return i.Build().ToString();
+            }).ToArray();
             var typesInUse = PropertyBuilders.Select(i => i.PropertyType).Concat(PropertyBuilders
                 .Where(i => i.Attributes != null)
                 .SelectMany(o => o.Attributes.Select(j => j.Compile().Invoke().GetType())));
             var uniqueUsings = typesInUse.Select(o => o.Namespace).Distinct();
 
-            var buildClass = BuildClass(uniqueUsings, propertiesBuilt, Name);
+            var builtClass = BuildClassOrInterface(uniqueUsings, propertiesBuilt, Name, IsInterface);
 
             var generateAssembly =
-                Cache.Method(i => i.GenerateAssembly(buildClass)).GetValue();
+                Cache.Method(i => i.GenerateAssembly(builtClass)).GetValue();
 
             return generateAssembly.GetTypes()
                 .LastOrDefault();
         }
 
-        private static string BuildClass(IEnumerable<string> uniqueUsings, string[] propertiesBuilt, string name)
+        private static string BuildClassOrInterface(IEnumerable<string> uniqueUsings, string[] propertiesBuilt, string name, bool asInterface)
         {
-            var classRepresentationBuilder = new ClassRepresentationBuilder();
-            classRepresentationBuilder.WithUsings(uniqueUsings.ToArray());
-            classRepresentationBuilder.WithName(name);
-            classRepresentationBuilder.WithProperties(propertiesBuilt);
+            var classRepresentationBuilder = new ClassRepresentationBuilder().WithUsings(uniqueUsings.ToArray()).WithName(name).WithProperties(propertiesBuilt);
+
+            if (asInterface)
+                classRepresentationBuilder.AsInterface();
+
             var classResult = classRepresentationBuilder.Build();
             return classResult;
         }

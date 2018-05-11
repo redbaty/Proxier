@@ -60,6 +60,8 @@ namespace Proxier.Builders
 
         private bool IsReadOnly { get; set; }
 
+        private bool IsInterface { get; set; }
+
         private string Name { get; set; }
 
         /// <summary>
@@ -95,6 +97,12 @@ namespace Proxier.Builders
             return this;
         }
 
+        public PropertyBuilder AsInterface()
+        {
+            IsInterface = true;
+            return this;
+        }
+
         /// <summary>
         ///     Makes the property read only.
         /// </summary>
@@ -111,7 +119,7 @@ namespace Proxier.Builders
         /// <returns></returns>
         public PropertyRepresentation Build()
         {
-            return new PropertyRepresentation(Name, PropertyType, IsReadOnly, Attributes, CompiledAttributes);
+            return new PropertyRepresentation(Name, PropertyType, IsReadOnly, Attributes, CompiledAttributes, IsInterface);
         }
     }
 }

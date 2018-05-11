@@ -8,8 +8,8 @@ namespace Proxier.Builders
     {
         private List<string> ClassAttributes { get; } = new List<string>();
 
-        private string ClassName { get; set; } =
-            Nanoid.Nanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 32);
+        private string ClassName { get; set; }
+  = Nanoid.Nanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 32);
 
         private List<string> Properties { get; } = new List<string>();
 
@@ -17,13 +17,21 @@ namespace Proxier.Builders
 
         private List<string> Usings { get; } = new List<string> {"System"};
 
+        private bool IsInterface { get; set; }
+
+        public ClassRepresentationBuilder AsInterface()
+        {
+            IsInterface = true;
+            return this;
+        }
+
         private void AddClassHeader()
         {
             foreach (var @using in Usings.Distinct()) WriteLine($"using {@using};");
 
             WriteLine("");
             AddClassAttributes();
-            WriteLine($"public class {ClassName} {{");
+            WriteLine($"public {(IsInterface ? "interface" : "class")} {ClassName} {{");
         }
 
         private void AddClassAttributes()
