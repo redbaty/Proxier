@@ -107,14 +107,35 @@ namespace Proxier.Extensions
             var targetProperties = Cache.Method(r => r.GetProperty(targetType, ignorePrivate))
                 .GetValue().ToDictionary(i => i.Name);
 
-            foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore))
+            foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore ?? new List<PropertyInfo>())
+            )
             {
                 var value = options.Resolver.Invoke(new CopyContext(propertyInfo, source, target));
 
                 if (options.IgnoreNulls && value == null)
                     continue;
 
-                targetProperties[propertyInfo.Name].SetValue(target, value);
+                if (targetProperties.ContainsKey(propertyInfo.Name))
+                {
+                    var targetProperty = targetProperties[propertyInfo.Name];
+
+                    if (options.UseNullableBaseType)
+                    {
+                        var trueSourceType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ??
+                                             propertyInfo.PropertyType;
+                        var trueTargetType =
+                            Nullable.GetUnderlyingType(targetProperty.PropertyType) ??
+                            targetProperty.PropertyType;
+
+                        if (trueSourceType == trueTargetType)
+                            targetProperty.SetValue(target, value);
+                    }
+                    else
+                    {
+                        if (propertyInfo.PropertyType == targetProperty.PropertyType)
+                            targetProperty.SetValue(target, value);
+                    }
+                }
             }
         }
 

@@ -17,6 +17,11 @@ namespace Proxier
         public bool CopyPrivates { get; set; }
 
         /// <summary>
+        ///     If set the copier will compare the base type from nullable types
+        /// </summary>
+        public bool UseNullableBaseType { get; set; } = true;
+
+        /// <summary>
         ///     If set this will not copy null values.
         /// </summary>
         /// <returns></returns>
