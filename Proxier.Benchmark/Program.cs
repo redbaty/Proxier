@@ -17,10 +17,17 @@ namespace Proxier.Benchmark
 
         private static void Main()
         {
+            ConvertToInterface();
             SingleIteration();
             MultipleIteration();
             DeepClone();
             Console.ReadLine();
+        }
+
+        private static void ConvertToInterface()
+        {
+            var builder = new ClassBuilder();
+            var res = builder.FromType(typeof(Person)).AsInterface().WithName("IPerson").Build();
         }
 
         [Time]
