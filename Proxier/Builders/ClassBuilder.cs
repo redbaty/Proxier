@@ -39,6 +39,8 @@ namespace Proxier.Builders
         /// </value>
         public HashSet<PropertyBuilder> PropertyBuilders { get; } = new HashSet<PropertyBuilder>();
 
+        private bool IsInterface { get; set; }
+
         /// <summary>
         ///     Use an existing type as model.
         /// </summary>
@@ -129,8 +131,6 @@ namespace Proxier.Builders
             return this;
         }
 
-        private bool IsInterface { get; set; }
-
         public ClassBuilder AsInterface()
         {
             IsInterface = true;
@@ -164,9 +164,11 @@ namespace Proxier.Builders
                 .LastOrDefault();
         }
 
-        private static string BuildClassOrInterface(IEnumerable<string> uniqueUsings, string[] propertiesBuilt, string name, bool asInterface)
+        private static string BuildClassOrInterface(IEnumerable<string> uniqueUsings, string[] propertiesBuilt,
+            string name, bool asInterface)
         {
-            var classRepresentationBuilder = new ClassRepresentationBuilder().WithUsings(uniqueUsings.ToArray()).WithName(name).WithProperties(propertiesBuilt);
+            var classRepresentationBuilder = new ClassRepresentationBuilder().WithUsings(uniqueUsings.ToArray())
+                .WithName(name).WithProperties(propertiesBuilt);
 
             if (asInterface)
                 classRepresentationBuilder.AsInterface();

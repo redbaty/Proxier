@@ -119,7 +119,8 @@ namespace Proxier.Builders
         /// <returns></returns>
         public PropertyRepresentation Build()
         {
-            return new PropertyRepresentation(Name, PropertyType, IsReadOnly, Attributes, CompiledAttributes, IsInterface);
+            return new PropertyRepresentation(Name, PropertyType, IsReadOnly, Attributes, CompiledAttributes,
+                IsInterface);
         }
     }
 }

@@ -56,7 +56,8 @@ namespace Proxier.Representations
                 foreach (var compiledAttribute in CompiledAttributes)
                     stringBuilder.AppendLine($"\t[{compiledAttribute}]");
 
-            stringBuilder.AppendLine($"\t{(IsInterface ? string.Empty : "public ")}{GetResolvedName(Type)} {Name} {{ get;{(IsReadOnly ? string.Empty : " set;")} }}");
+            stringBuilder.AppendLine(
+                $"\t{(IsInterface ? string.Empty : "public ")}{GetResolvedName(Type)} {Name} {{ get;{(IsReadOnly ? string.Empty : " set;")} }}");
 
             return stringBuilder.ToString();
         }

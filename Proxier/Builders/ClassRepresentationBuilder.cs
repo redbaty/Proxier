@@ -9,7 +9,7 @@ namespace Proxier.Builders
         private List<string> ClassAttributes { get; } = new List<string>();
 
         private string ClassName { get; set; }
-  = Nanoid.Nanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 32);
+            = Nanoid.Nanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 32);
 
         private List<string> Properties { get; } = new List<string>();
 
