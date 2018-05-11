@@ -57,20 +57,26 @@ namespace Proxier.Representations
                     stringBuilder.AppendLine($"\t[{compiledAttribute}]");
 
             stringBuilder.AppendLine(
-                $"\t{(IsInterface ? string.Empty : "public ")}{GetResolvedName(Type)} {Name} {{ get;{(IsReadOnly ? string.Empty : " set;")} }}");
+                $"\t{(IsInterface ? string.Empty : "public ")}{GetResolvedTypeName(Type)} {Name} {{ get;{(IsReadOnly ? string.Empty : " set;")} }}");
 
             return stringBuilder.ToString();
         }
 
-        private string GetResolvedName(Type type)
+        private string GetResolvedTypeName(Type type)
         {
-            return IsSimple(type) ? type.Name.ToLower() : type.Name;
-        }
+            var isNullable = false;
 
-        private bool IsSimple(Type type)
-        {
-            return type.IsPrimitive
-                   || type == typeof(string);
+            while (true)
+            {
+                if (Nullable.GetUnderlyingType(type ?? throw new ArgumentNullException(nameof(type))) != null)
+                {
+                    isNullable = true;
+                    type = Nullable.GetUnderlyingType(type);    
+                    continue;
+                }
+
+                return type.Name + (isNullable ? "?" : "");
+            }
         }
     }
 }

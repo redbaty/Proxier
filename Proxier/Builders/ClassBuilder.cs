@@ -137,11 +137,7 @@ namespace Proxier.Builders
             return this;
         }
 
-        /// <summary>
-        ///     Builds this instance into a real type.
-        /// </summary>
-        /// <returns></returns>
-        public Type Build()
+        public string GetAsCode()
         {
             var propertiesBuilt = PropertyBuilders.Select(i =>
             {
@@ -155,10 +151,19 @@ namespace Proxier.Builders
                 .SelectMany(o => o.Attributes.Select(j => j.Compile().Invoke().GetType())));
             var uniqueUsings = typesInUse.Select(o => o.Namespace).Distinct();
 
-            var builtClass = BuildClassOrInterface(uniqueUsings, propertiesBuilt, Name, IsInterface);
+            return BuildClassOrInterface(uniqueUsings, propertiesBuilt, Name, IsInterface);
+        }
+
+        /// <summary>
+        ///     Builds this instance into a real type.
+        /// </summary>
+        /// <returns></returns>
+        public Type Build()
+        {
+            
 
             var generateAssembly =
-                Cache.Method(i => i.GenerateAssembly(builtClass)).GetValue();
+                Cache.Method(i => i.GenerateAssembly(GetAsCode())).GetValue();
 
             return generateAssembly.GetTypes()
                 .LastOrDefault();
