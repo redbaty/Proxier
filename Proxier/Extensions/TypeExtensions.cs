@@ -38,10 +38,27 @@ namespace Proxier.Extensions
         /// <param name="source">The base class instance.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        public static void CopyTo(this object source, object target)
+        public static void CopyTo<TSource>(this TSource source, object target)
         {
             CopyTo(source, target, new CopyToOptions());
         }
+
+        /// <summary>
+        ///     Copies object to another object ignoring some properties.
+        /// </summary>
+        /// <param name="source">The base class instance.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="propertiesToIgnore"></param>
+        /// <returns></returns>
+        public static void CopyTo<TSource>(this TSource source, object target,
+            params string[] propertiesToIgnore)
+        {
+            CopyTo(source, target, new CopyToOptions
+            {
+                PropertiesToIgnore = typeof(TSource).GetProperties().Where(i => propertiesToIgnore.Contains(i.Name))
+            });
+        }
+
 
         /// <summary>
         ///     Copies object to another object ignoring some properties.
