@@ -66,6 +66,8 @@ namespace Proxier.Representations
         {
             var isNullable = false;
 
+            if (type.IsGenericType && Nullable.GetUnderlyingType(type) == null) return GetRealName(type);
+
             while (true)
             {
                 if (Nullable.GetUnderlyingType(type ?? throw new ArgumentNullException(nameof(type))) != null)
@@ -77,6 +79,18 @@ namespace Proxier.Representations
 
                 return type.Name + (isNullable ? "?" : "");
             }
+        }
+
+        private static string GetRealName(Type type)
+        {
+            if (type.IsGenericType && Nullable.GetUnderlyingType(type) == null)
+            {
+                var resolvedTypeName =
+                    $"{type.Name.Substring(0, type.Name.IndexOf("`", StringComparison.Ordinal))}<{type.GetGenericArguments().Select(GetRealName).Aggregate((x, y) => $"{x}, {y}")}>";
+                return resolvedTypeName;
+            }
+
+            return type.Name;
         }
     }
 }
