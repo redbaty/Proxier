@@ -22,6 +22,13 @@ namespace Proxier.Builders
         }
 
         private static Cache<ClassBuilderRepository> Cache { get; }
+        /// <summary>
+        ///     Gets the additional usings.
+        /// </summary>
+        /// <value>
+        ///     The additional usings.
+        /// </value>
+        public List<string> AdditionalUsings { get; } = new List<string>();
 
         /// <summary>
         ///     Gets the class name.
@@ -56,6 +63,27 @@ namespace Proxier.Builders
         }
 
         /// <summary>
+        /// Forcefully add this using into the built class.
+        /// </summary>
+        /// <param name="additionalUsing">The additional using.</param>
+        /// <returns></returns>
+        public ClassBuilder Using(string additionalUsing)
+        {
+            AdditionalUsings.Add(additionalUsing);
+            return this;
+        }
+
+        /// <summary>
+        /// Forcefully add these usings into the built class.
+        /// </summary>
+        /// <param name="additionalUsings">The additional usings.</param>
+        /// <returns></returns>
+        public ClassBuilder Using(IEnumerable<string> additionalUsings)
+        {
+            AdditionalUsings.AddRange(additionalUsings);
+            return this;
+        }
+
         ///     Sets a class name (Random generated if none is found at build time)
         /// </summary>
         /// <param name="name">The name.</param>
@@ -173,6 +201,7 @@ namespace Proxier.Builders
             string name, bool asInterface)
         {
             var classRepresentationBuilder = new ClassRepresentationBuilder().WithUsings(uniqueUsings.ToArray())
+                .WithUsings(AdditionalUsings.ToArray())
                 .WithName(name).WithProperties(propertiesBuilt);
 
             if (asInterface)
