@@ -57,7 +57,7 @@ namespace Proxier.Builders
 
         private void AddProperties()
         {
-            foreach (var property in Properties) WriteLine(property);
+            Representation += Properties.Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
         }
 
         private void AddFooter()
