@@ -39,6 +39,14 @@ namespace Proxier.Builders
         public string Name { get; private set; }
 
         /// <summary>
+        ///     Gets the namespace.
+        /// </summary>
+        /// <value>
+        ///     The namespace.
+        /// </value>
+        public string Namespace { get; private set; }
+
+        /// <summary>
         ///     Gets the property builders.
         /// </summary>
         /// <value>
@@ -84,6 +92,18 @@ namespace Proxier.Builders
             return this;
         }
 
+        /// <summary>
+        ///     Creates the type on a certain namespace.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <returns></returns>
+        public ClassBuilder OnNamespace(string nameSpace)
+        {
+            Namespace = nameSpace;
+            return this;
+        }
+
+        /// <summary>
         ///     Sets a class name (Random generated if none is found at build time)
         /// </summary>
         /// <param name="name">The name.</param>
@@ -197,11 +217,12 @@ namespace Proxier.Builders
                 .LastOrDefault();
         }
 
-        private static string BuildClassOrInterface(IEnumerable<string> uniqueUsings, string[] propertiesBuilt,
+        private string BuildClassOrInterface(IEnumerable<string> uniqueUsings, string[] propertiesBuilt,
             string name, bool asInterface)
         {
-            var classRepresentationBuilder = new ClassRepresentationBuilder().WithUsings(uniqueUsings.ToArray())
+            var classRepresentationBuilder = new ClassRepresentationBuilder().WithNamespace(Namespace)
                 .WithUsings(AdditionalUsings.ToArray())
+                .WithUsings(uniqueUsings.ToArray())
                 .WithName(name).WithProperties(propertiesBuilt);
 
             if (asInterface)

@@ -11,6 +11,7 @@ namespace Proxier.Builders
         private string ClassName { get; set; }
             = Nanoid.Nanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 32);
 
+        private string Namespace { get; set; }
         private List<string> Properties { get; } = new List<string>();
 
         private string Representation { get; set; } = "";
@@ -18,6 +19,11 @@ namespace Proxier.Builders
         private List<string> Usings { get; } = new List<string> {"System"};
 
         private bool IsInterface { get; set; }
+        public ClassRepresentationBuilder WithNamespace(string nameSpace)
+        {
+            Namespace = nameSpace;
+            return this;
+        }
 
         public ClassRepresentationBuilder AsInterface()
         {
@@ -30,8 +36,16 @@ namespace Proxier.Builders
             foreach (var @using in Usings.Distinct()) WriteLine($"using {@using};");
 
             WriteLine("");
+
+            if (!string.IsNullOrEmpty(Namespace)) AddNameSpace();
+
             AddClassAttributes();
             WriteLine($"public {(IsInterface ? "interface" : "class")} {ClassName} {{");
+        }
+
+        private void AddNameSpace()
+        {
+            WriteLine($"namespace {Namespace}\n{{");
         }
 
         private void AddClassAttributes()
@@ -47,6 +61,8 @@ namespace Proxier.Builders
         private void AddFooter()
         {
             WriteLine("}");
+
+            if (!string.IsNullOrEmpty(Namespace)) WriteLine("}");
         }
 
         private void WriteLine(string toWrite)
