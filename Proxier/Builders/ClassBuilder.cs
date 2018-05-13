@@ -179,12 +179,20 @@ namespace Proxier.Builders
             return this;
         }
 
+        /// <summary>
+        ///     Specifies that this class should be a interface instead.
+        /// </summary>
+        /// <returns></returns>
         public ClassBuilder AsInterface()
         {
             IsInterface = true;
             return this;
         }
 
+        /// <summary>
+        ///     Gets the result as code instead of an type.
+        /// </summary>
+        /// <returns></returns>
         public string GetAsCode()
         {
             var propertiesBuilt = PropertyBuilders.Select(i =>
