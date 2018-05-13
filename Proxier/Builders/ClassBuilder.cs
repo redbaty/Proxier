@@ -72,7 +72,7 @@ namespace Proxier.Builders
         }
 
         /// <summary>
-        /// Forcefully add this using into the built class.
+        ///     Forcefully add this using into the built class.
         /// </summary>
         /// <param name="additionalUsing">The additional using.</param>
         /// <returns></returns>
@@ -83,7 +83,7 @@ namespace Proxier.Builders
         }
 
         /// <summary>
-        /// Forcefully add these usings into the built class.
+        ///     Forcefully add these usings into the built class.
         /// </summary>
         /// <param name="additionalUsings">The additional usings.</param>
         /// <returns></returns>

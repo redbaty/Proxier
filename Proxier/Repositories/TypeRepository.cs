@@ -10,10 +10,12 @@ namespace Proxier.Repositories
         {
             return ignorePrivate
                 ? type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
-                    i => i.PropertyType.Namespace != null && i.PropertyType.Namespace.StartsWith("System") || i.PropertyType.IsEnum).ToArray()
+                    i => i.PropertyType.Namespace != null && i.PropertyType.Namespace.StartsWith("System") ||
+                         i.PropertyType.IsEnum).ToArray()
                 : type
                     .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).Where(
-                        i => i.PropertyType.Namespace != null && i.PropertyType.Namespace.StartsWith("System") || i.PropertyType.IsEnum).ToArray();
+                        i => i.PropertyType.Namespace != null && i.PropertyType.Namespace.StartsWith("System") ||
+                             i.PropertyType.IsEnum).ToArray();
         }
     }
 }
