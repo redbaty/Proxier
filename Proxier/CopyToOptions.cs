@@ -17,11 +17,6 @@ namespace Proxier
         public bool CopyPrivates { get; set; }
 
         /// <summary>
-        ///     If set the copier will compare the base type from nullable types
-        /// </summary>
-        public bool UseNullableBaseType { get; set; } = true;
-
-        /// <summary>
         ///     If set this will not copy null values.
         /// </summary>
         /// <returns></returns>
@@ -38,5 +33,10 @@ namespace Proxier
         /// </summary>
         /// <returns></returns>
         public Func<ICopyContext, object> Resolver { get; set; } = context => context.Property.GetValue(context.Source);
+
+        /// <summary>
+        ///     If set the copier will compare the base type from nullable types
+        /// </summary>
+        public bool UseNullableBaseType { get; set; } = true;
     }
 }

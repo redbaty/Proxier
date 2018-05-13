@@ -5,13 +5,6 @@ namespace Proxier.Contexts
 {
     internal class CopyContext : ICopyContext
     {
-        public CopyContext(PropertyInfo property, object source, object target)
-        {
-            Property = property;
-            Source = source;
-            Target = target;
-        }
-
         /// <inheritdoc />
         public PropertyInfo Property { get; }
 
@@ -20,5 +13,12 @@ namespace Proxier.Contexts
 
         /// <inheritdoc />
         public object Target { get; }
+
+        public CopyContext(PropertyInfo property, object source, object target)
+        {
+            Property = property;
+            Source = source;
+            Target = target;
+        }
     }
 }

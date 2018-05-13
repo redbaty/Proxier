@@ -15,12 +15,12 @@ namespace Proxier.Extensions
     /// </summary>
     public static class TypeExtensions
     {
+        private static Cache<TypeRepository> Cache { get; }
+
         static TypeExtensions()
         {
             Cache = new FluentDictionaryCache().WithSource(new TypeRepository());
         }
-
-        private static Cache<TypeRepository> Cache { get; }
 
         /// <summary>
         ///     Copies object to another object using reflection.

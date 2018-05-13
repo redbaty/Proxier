@@ -10,30 +10,6 @@ namespace Proxier.Builders
     /// </summary>
     public class PropertyBuilder
     {
-        /// <inheritdoc />
-        public PropertyBuilder()
-        {
-        }
-
-        /// <inheritdoc />
-        public PropertyBuilder(string name, Type propertyType,
-            IEnumerable<Expression<Func<Attribute>>> attributes = null, bool readOnly = false)
-        {
-            Attributes = attributes;
-            Name = name;
-            PropertyType = propertyType;
-            IsReadOnly = readOnly;
-        }
-
-        /// <inheritdoc />
-        public PropertyBuilder(string name, Type propertyType, IEnumerable<Attribute> attributes, bool readOnly = false)
-        {
-            Name = name;
-            PropertyType = propertyType;
-            CompiledAttributes = attributes;
-            IsReadOnly = readOnly;
-        }
-
         /// <summary>
         ///     Attribute expressions.
         /// </summary>
@@ -58,11 +34,35 @@ namespace Proxier.Builders
         /// </value>
         private IEnumerable<Attribute> CompiledAttributes { get; }
 
-        private bool IsReadOnly { get; set; }
-
         private bool IsInterface { get; set; }
 
+        private bool IsReadOnly { get; set; }
+
         private string Name { get; set; }
+
+        /// <inheritdoc />
+        public PropertyBuilder()
+        {
+        }
+
+        /// <inheritdoc />
+        public PropertyBuilder(string name, Type propertyType,
+            IEnumerable<Expression<Func<Attribute>>> attributes = null, bool readOnly = false)
+        {
+            Attributes = attributes;
+            Name = name;
+            PropertyType = propertyType;
+            IsReadOnly = readOnly;
+        }
+
+        /// <inheritdoc />
+        public PropertyBuilder(string name, Type propertyType, IEnumerable<Attribute> attributes, bool readOnly = false)
+        {
+            Name = name;
+            PropertyType = propertyType;
+            CompiledAttributes = attributes;
+            IsReadOnly = readOnly;
+        }
 
         /// <summary>
         ///     Adds an attributes.

@@ -11,6 +11,18 @@ namespace Proxier.Representations
     /// </summary>
     public class PropertyRepresentation
     {
+        private IEnumerable<Expression<Func<Attribute>>> Attributes { get; }
+
+        private IEnumerable<Attribute> CompiledAttributes { get; }
+
+        private bool IsInterface { get; }
+
+        private bool IsReadOnly { get; }
+
+        private string Name { get; }
+
+        private Type Type { get; }
+
         /// <inheritdoc />
         public PropertyRepresentation(string name, Type type, bool isReadOnly,
             IEnumerable<Expression<Func<Attribute>>> attributes,
@@ -23,18 +35,6 @@ namespace Proxier.Representations
             IsInterface = isInterface;
             IsReadOnly = isReadOnly;
         }
-
-        private IEnumerable<Expression<Func<Attribute>>> Attributes { get; }
-
-        private IEnumerable<Attribute> CompiledAttributes { get; }
-
-        private bool IsReadOnly { get; }
-
-        private string Name { get; }
-
-        private Type Type { get; }
-
-        private bool IsInterface { get; }
 
         /// <inheritdoc />
         public override string ToString()
@@ -71,7 +71,7 @@ namespace Proxier.Representations
                 if (Nullable.GetUnderlyingType(type ?? throw new ArgumentNullException(nameof(type))) != null)
                 {
                     isNullable = true;
-                    type = Nullable.GetUnderlyingType(type);    
+                    type = Nullable.GetUnderlyingType(type);
                     continue;
                 }
 

@@ -16,12 +16,6 @@ namespace Proxier.Builders
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ClassBuilder
     {
-        static ClassBuilder()
-        {
-            Cache = new FluentDictionaryCache().WithSource(new ClassBuilderRepository());
-        }
-
-        private static Cache<ClassBuilderRepository> Cache { get; }
         /// <summary>
         ///     Gets the additional usings.
         /// </summary>
@@ -54,7 +48,14 @@ namespace Proxier.Builders
         /// </value>
         public HashSet<PropertyBuilder> PropertyBuilders { get; } = new HashSet<PropertyBuilder>();
 
+        private static Cache<ClassBuilderRepository> Cache { get; }
+
         private bool IsInterface { get; set; }
+
+        static ClassBuilder()
+        {
+            Cache = new FluentDictionaryCache().WithSource(new ClassBuilderRepository());
+        }
 
         /// <summary>
         ///     Use an existing type as model.
@@ -216,8 +217,6 @@ namespace Proxier.Builders
         /// <returns></returns>
         public Type Build()
         {
-            
-
             var generateAssembly =
                 Cache.Method(i => i.GenerateAssembly(GetAsCode())).GetValue();
 
