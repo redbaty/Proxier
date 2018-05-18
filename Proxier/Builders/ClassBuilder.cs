@@ -40,6 +40,8 @@ namespace Proxier.Builders
         /// </value>
         public string Namespace { get; private set; }
 
+        private List<string> Parents { get; } = new List<string>();
+
         /// <summary>
         ///     Gets the property builders.
         /// </summary>
@@ -227,7 +229,7 @@ namespace Proxier.Builders
         private string BuildClassOrInterface(IEnumerable<string> uniqueUsings, string[] propertiesBuilt,
             string name, bool asInterface)
         {
-            var classRepresentationBuilder = new ClassRepresentationBuilder().WithNamespace(Namespace)
+            var classRepresentationBuilder = new ClassRepresentationBuilder().InheritsFrom(Parents).WithNamespace(Namespace)
                 .WithUsings(AdditionalUsings.ToArray())
                 .WithUsings(uniqueUsings.ToArray())
                 .WithName(name).WithProperties(propertiesBuilt);
@@ -237,6 +239,12 @@ namespace Proxier.Builders
 
             var classResult = classRepresentationBuilder.Build();
             return classResult;
+        }
+
+        public ClassBuilder InheritsFrom(string classOrInterfaceToInherit)
+        {
+            Parents.Add(classOrInterfaceToInherit);
+            return this;
         }
     }
 }

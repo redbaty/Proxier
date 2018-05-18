@@ -21,9 +21,23 @@ namespace Proxier.Builders
 
         private List<string> Usings { get; } = new List<string> {"System"};
 
+        private List<string> Parents { get; } = new List<string>();
+
         public ClassRepresentationBuilder WithNamespace(string nameSpace)
         {
             Namespace = nameSpace;
+            return this;
+        }
+
+        public ClassRepresentationBuilder InheritsFrom(string toInherit)
+        {
+            Parents.Add(toInherit);
+            return this;
+        }
+
+        public ClassRepresentationBuilder InheritsFrom(IEnumerable<string> toInherit)
+        {
+            Parents.AddRange(toInherit);
             return this;
         }
 
@@ -42,7 +56,17 @@ namespace Proxier.Builders
             if (!string.IsNullOrEmpty(Namespace)) AddNameSpace();
 
             AddClassAttributes();
-            WriteLine($"public {(IsInterface ? "interface" : "class")} {ClassName} {{");
+            WriteLine($"public {(IsInterface ? "interface" : "class")} {ClassName}{ResolveInheritance()} {{");
+        }
+
+        private string ResolveInheritance()
+        {
+            if (Parents.Any())
+            {
+                return $" : {(Parents.Distinct().OrderBy(i => i).Aggregate((x, y) => $"{x}, {y}"))}";
+            }
+
+            return string.Empty;
         }
 
         private void AddNameSpace()
