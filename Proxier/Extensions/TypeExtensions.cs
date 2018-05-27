@@ -36,6 +36,46 @@ namespace Proxier.Extensions
         ///     Copies object to another object using reflection.
         /// </summary>
         /// <param name="source">The base class instance.</param>
+        /// <param name="newInstanceType"></param>
+        /// <returns></returns>
+        public static object CopyTo<TSource>(this TSource source, Type newInstanceType)
+        {
+            var instance = Activator.CreateInstance(newInstanceType);
+            CopyTo(source, instance, new CopyToOptions());
+            return instance;
+        }
+
+        /// <summary>
+        ///     Copies object to another object using reflection.
+        /// </summary>
+        /// <param name="source">The base class instance.</param>
+        /// <returns></returns>
+        public static TTarget CopyTo<TSource, TTarget>(this TSource source)
+        {
+            var instance = Activator.CreateInstance<TTarget>();
+            CopyTo(source, instance, new CopyToOptions());
+            return instance;
+        }
+
+        /// <summary>
+        ///     Copies object to another object using reflection.
+        /// </summary>
+        /// <param name="source">The base class instance.</param>
+        /// <returns></returns>
+        public static IEnumerable<TTarget> CopyTo<TSource, TTarget>(this IEnumerable<TSource> source)
+        {
+            foreach (var src in source)
+            {
+                var instance = Activator.CreateInstance<TTarget>();
+                CopyTo(src, instance, new CopyToOptions());
+                yield return instance;
+            }
+        }
+
+        /// <summary>
+        ///     Copies object to another object using reflection.
+        /// </summary>
+        /// <param name="source">The base class instance.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
         public static void CopyTo<TSource>(this TSource source, object target)
