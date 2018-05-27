@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -27,9 +28,11 @@ namespace Proxier.Extensions
         /// </summary>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static void DeepClone(this object source)
+        public static T DeepClone<T>(this T source)
         {
-            CopyTo(source, Activator.CreateInstance(source.GetType()));
+            var instance = Activator.CreateInstance<T>();
+            CopyTo(source, instance);
+            return instance;
         }
 
         /// <summary>
@@ -62,7 +65,7 @@ namespace Proxier.Extensions
         /// </summary>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static IEnumerable<TTarget> CopyTo<TSource, TTarget>(this IEnumerable<TSource> source)
+        public static IEnumerable<TTarget> ConvertTo<TSource, TTarget>(this TSource source) where TSource: IEnumerable
         {
             foreach (var src in source)
             {
@@ -81,6 +84,18 @@ namespace Proxier.Extensions
         public static void CopyTo<TSource>(this TSource source, object target)
         {
             CopyTo(source, target, new CopyToOptions());
+        }
+
+        /// <summary>
+        ///     Copies object to another object using reflection.
+        /// </summary>
+        /// <param name="source">The base class instance.</param>
+        /// <param name="target">The target.</param>
+        /// <returns></returns>
+        public static TTarget CopyTo<TSource, TTarget>(this TSource source, TTarget target)
+        {
+            CopyTo(source, target, new CopyToOptions());
+            return target;
         }
 
         /// <summary>
@@ -121,24 +136,17 @@ namespace Proxier.Extensions
         {
             var type = typeof(TSource);
 
-            var member = propertyLambda.Body as MemberExpression;
-            if (member == null)
-                throw new ArgumentException(string.Format(
-                    "Expression '{0}' refers to a method, not a property.",
-                    propertyLambda));
+            if (!(propertyLambda.Body is MemberExpression member))
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
 
             var propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
-                throw new ArgumentException(string.Format(
-                    "Expression '{0}' refers to a field, not a property.",
-                    propertyLambda));
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
 
-            if (type != propInfo.ReflectedType &&
-                !type.IsSubclassOf(propInfo.ReflectedType))
-                throw new ArgumentException(string.Format(
-                    "Expression '{0}' refers to a property that is not from type {1}.",
-                    propertyLambda,
-                    type));
+            if (propInfo.ReflectedType != null && (type != propInfo.ReflectedType &&
+                                                   !type.IsSubclassOf(propInfo.ReflectedType)))
+                throw new ArgumentException(
+                    $"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
 
             return propInfo;
         }
