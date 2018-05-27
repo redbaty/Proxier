@@ -219,8 +219,10 @@ namespace Proxier.Builders
         /// <returns></returns>
         public Type Build()
         {
+            var code = GetAsCode();
+
             var generateAssembly =
-                Cache.Method(i => i.GenerateAssembly(GetAsCode())).GetValue();
+                Cache.Method(i => i.GenerateAssembly(code)).GetValue();
 
             return generateAssembly.GetTypes()
                 .LastOrDefault();
