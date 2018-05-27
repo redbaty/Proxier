@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Proxier.Builders
 {
@@ -126,8 +128,7 @@ namespace Proxier.Builders
             AddClassHeader();
             AddProperties();
             AddFooter();
-
-            return Representation;
+            return CSharpSyntaxTree.ParseText(Representation).GetRoot().NormalizeWhitespace().ToFullString();
         }
     }
 }
