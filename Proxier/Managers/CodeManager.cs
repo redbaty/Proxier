@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -52,11 +51,6 @@ namespace Proxier.Managers
                     .ToList())
                 .AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(code));
             return compilation;
-        }
-
-        public Task<IEnumerable<Type>> GetTypesFrom(string path)
-        {
-            return Task.Run(() => Assembly.LoadFrom(path).GetTypes().AsEnumerable());
         }
     }
 }

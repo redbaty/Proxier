@@ -243,6 +243,11 @@ namespace Proxier.Builders
             return classResult;
         }
 
+        /// <summary>
+        ///     Makes this class inherit from a certain class or interface.
+        /// </summary>
+        /// <param name="classOrInterfaceToInherit"></param>
+        /// <returns></returns>
         public ClassBuilder InheritsFrom(string classOrInterfaceToInherit)
         {
             Parents.Add(classOrInterfaceToInherit);
