@@ -26,6 +26,7 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
         public static T DeepClone<T>(this T source)
@@ -38,6 +39,7 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
+        /// <typeparam name="TSource"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <param name="newInstanceType"></param>
         /// <returns></returns>
@@ -51,9 +53,12 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TTarget"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static TTarget CopyTo<TSource, TTarget>(this TSource source)
+        public static TTarget Xxxota<TTarget>(this object source)
+            where TTarget : class
         {
             var instance = Activator.CreateInstance<TTarget>();
             CopyTo(source, instance, new CopyToOptions());
@@ -63,9 +68,11 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TTarget"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static IEnumerable<TTarget> ConvertTo<TSource, TTarget>(this TSource source) where TSource: IEnumerable
+        public static IEnumerable<TTarget> ConvertTo<TSource, TTarget>(this TSource source) where TSource : IEnumerable
         {
             foreach (var src in source)
             {
@@ -78,6 +85,7 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
+        /// <typeparam name="TSource"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
@@ -89,6 +97,8 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TTarget"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
@@ -101,6 +111,7 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object ignoring some properties.
         /// </summary>
+        /// <typeparam name="TSource"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <param name="target">The target.</param>
         /// <param name="propertiesToIgnore"></param>
@@ -118,6 +129,7 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object ignoring some properties.
         /// </summary>
+        /// <typeparam name="TSource"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <param name="target">The target.</param>
         /// <param name="propertiesToIgnore"></param>
@@ -228,7 +240,7 @@ namespace Proxier.Extensions
         /// <returns></returns>
         public static IEnumerable<Type> GetAllBaseTypes(this Type type)
         {
-            if (type == null || type.BaseType == null) return new List<Type> {type};
+            if (type == null || type.BaseType == null) return new List<Type> { type };
 
             var returnList = type.GetInterfaces().ToList();
 
