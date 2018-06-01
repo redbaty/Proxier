@@ -57,7 +57,7 @@ namespace Proxier.Extensions
         /// <typeparam name="TTarget"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static TTarget Xxxota<TTarget>(this object source)
+        public static TTarget CopyTo<TTarget>(this object source)
             where TTarget : class
         {
             var instance = Activator.CreateInstance<TTarget>();
@@ -72,7 +72,7 @@ namespace Proxier.Extensions
         /// <typeparam name="TTarget"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static IEnumerable<TTarget> ConvertTo<TSource, TTarget>(this TSource source) where TSource : IEnumerable
+        public static IEnumerable<TTarget> ConvertTo<TTarget>(this IEnumerable source)
         {
             foreach (var src in source)
             {
