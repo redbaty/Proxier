@@ -10,7 +10,7 @@
 
 ## Introduction :information_source:
 
-Have you ever had to create or modify a class at runtime? This is the solution! You can create entire new classes on modify current ones adding new properties on editing existing ones.
+Have you ever had to create or modify a class at runtime? With this library you can create an entire new class using the newly added ClassBuilder, or add properties and attributes to an existing one!
 
 ## Features
 
