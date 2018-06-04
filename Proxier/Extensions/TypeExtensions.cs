@@ -125,7 +125,6 @@ namespace Proxier.Extensions
             });
         }
 
-
         /// <summary>
         ///     Copies object to another object ignoring some properties.
         /// </summary>
@@ -176,13 +175,17 @@ namespace Proxier.Extensions
 
             var ignorePrivate = !options.CopyPrivates;
 
-            var sourceProperties = Cache.Method(r => r.GetProperty(sourceType, ignorePrivate))
-                .GetValue();
+            var sourceProperties = options.PropertiesToInclude != null && options.PropertiesToInclude.Any()
+                ? options.PropertiesToInclude
+                : Cache.Method(r => r.GetProperty(sourceType, ignorePrivate))
+                    .GetValue();
 
             var targetType = target.GetType();
 
-            var targetProperties = Cache.Method(r => r.GetProperty(targetType, ignorePrivate))
-                .GetValue().ToDictionary(i => i.Name);
+            var targetProperties = options.PropertiesToInclude != null && options.PropertiesToInclude.Any()
+                ? options.PropertiesToInclude.ToDictionary(i => i.Name)
+                : Cache.Method(r => r.GetProperty(targetType, ignorePrivate))
+                    .GetValue().ToDictionary(i => i.Name);
 
             foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore ?? new List<PropertyInfo>())
             )
@@ -240,7 +243,7 @@ namespace Proxier.Extensions
         /// <returns></returns>
         public static IEnumerable<Type> GetAllBaseTypes(this Type type)
         {
-            if (type == null || type.BaseType == null) return new List<Type> { type };
+            if (type == null || type.BaseType == null) return new List<Type> {type};
 
             var returnList = type.GetInterfaces().ToList();
 

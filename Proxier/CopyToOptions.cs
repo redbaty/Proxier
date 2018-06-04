@@ -28,6 +28,8 @@ namespace Proxier
         /// <returns></returns>
         public IEnumerable<PropertyInfo> PropertiesToIgnore { get; set; }
 
+        public IEnumerable<PropertyInfo> PropertiesToInclude { get; set; }
+
         /// <summary>
         ///     This will be used to get the value that will be set to a certain property.
         /// </summary>
