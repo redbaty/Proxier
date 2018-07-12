@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -207,15 +208,51 @@ namespace Proxier.Extensions
                             Nullable.GetUnderlyingType(targetProperty.PropertyType) ??
                             targetProperty.PropertyType;
 
+
+                        if(!targetProperty.CanWrite)
+                            continue;
+
                         if (trueSourceType == trueTargetType)
                             targetProperty.SetValue(target, value);
+                        else if (options.TryToConvert && CanConvert(value, propertyInfo, targetProperty, out var x))
+                            targetProperty.SetValue(target, x);
                     }
                     else
                     {
                         if (propertyInfo.PropertyType == targetProperty.PropertyType)
                             targetProperty.SetValue(target, value);
+                        else if (options.TryToConvert && CanConvert(value, propertyInfo, targetProperty, out var x))
+                            targetProperty.SetValue(target, x);
                     }
                 }
+            }
+        }
+
+        private static bool CanConvert(object value, PropertyInfo sourcePropertyInfo, PropertyInfo targetPropertyInfo,
+            out object obj)
+        {
+            obj = value;
+
+            var trueSourceType = Nullable.GetUnderlyingType(sourcePropertyInfo.PropertyType) ??
+                                 sourcePropertyInfo.PropertyType;
+
+            var trueTargetSourceType = Nullable.GetUnderlyingType(targetPropertyInfo.PropertyType) ??
+                                       targetPropertyInfo.PropertyType;
+
+            if (trueSourceType == trueTargetSourceType)
+            {
+                return true;
+            }
+
+            try
+            {
+                var val = Convert.ChangeType(value, trueTargetSourceType);
+                obj = val;
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
