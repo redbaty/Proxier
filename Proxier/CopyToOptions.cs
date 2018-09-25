@@ -28,6 +28,9 @@ namespace Proxier
         /// <returns></returns>
         public IEnumerable<PropertyInfo> PropertiesToIgnore { get; set; }
 
+        /// <summary>
+        ///     If set only these properties will be used when copying objects.
+        /// </summary>
         public IEnumerable<PropertyInfo> PropertiesToInclude { get; set; }
 
         /// <summary>
