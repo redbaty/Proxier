@@ -11,15 +11,22 @@
     <PackageProjectUrl>https://github.com/redbaty/Proxier</PackageProjectUrl>
     <PackageTags>Class Inject Runtime Attributes Properties</PackageTags>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DocumentationFile>bin\Debug\netstandard2.0\Proxier.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DocumentationFile>bin\Debug\netstandard2.0\Proxier.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DocumentationFile>bin\Release\netstandard2.0\Proxier.xml</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DocumentationFile>bin\Release\netstandard2.0\Proxier.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentCache" Version="4.0.0.1" />
+    <PackageReference Include="FluentCache" Version="4.0.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.8.2" />
     <PackageReference Include="Nanoid" Version="1.0.0" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />

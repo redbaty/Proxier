@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace Proxier.Representations
@@ -54,7 +55,17 @@ namespace Proxier.Representations
 
             if (CompiledAttributes != null && CompiledAttributes.Any())
                 foreach (var compiledAttribute in CompiledAttributes)
-                    stringBuilder.AppendLine($"\t[{compiledAttribute}]");
+                {
+                    var aggregate = compiledAttribute.GetType()
+                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(i => i.PropertyType.Namespace != null && i.PropertyType.Namespace.StartsWith("System") &&
+                                    i.CanWrite)
+                        .Select(i => new {i.Name, Value = i.GetValue(compiledAttribute)})
+                        .Where(i => i.Value != null)
+                        .Select(i => i.Value is string ? $"{i.Name}=\"{i.Value}\"" : $"{i.Name}={i.Value}")
+                        .Aggregate((x, y) => $"{x}, {y}");
+                    stringBuilder.AppendLine($"\t[{compiledAttribute}({aggregate})]");
+                }
 
             stringBuilder.AppendLine(
                 $"\t{(IsInterface ? string.Empty : "public ")}{GetResolvedTypeName(Type)} {Name} {{ get;{(IsReadOnly ? string.Empty : " set;")} }}");
