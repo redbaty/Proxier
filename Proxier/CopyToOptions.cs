@@ -17,6 +17,13 @@ namespace Proxier
         public bool CopyPrivates { get; set; }
 
         /// <summary>
+        ///     If set and the properties between the two objects are different
+        ///     the copier will try to convert it to the target type.
+        /// </summary>
+        /// <returns></returns>
+        public bool TryToConvert { get; set; } = true;
+
+        /// <summary>
         ///     If set this will not copy null values.
         /// </summary>
         /// <returns></returns>
