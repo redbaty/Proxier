@@ -14,6 +14,8 @@ Have you ever had to create or modify a class at runtime? With this library you 
 
 ## Features
 
+* Deep Clone objects.
+* Add or modify properties and types at runtime.
 *  ℹ️ Semantic extensions, easy to use.
 * 🌎 .NET Core support
 * ⚙️ Fluent engine
