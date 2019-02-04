@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,14 +16,15 @@ namespace Proxier.Managers
         ///     Generates an assembly from code.
         /// </summary>
         /// <param name="code">The code.</param>
+        /// <param name="references">Assembly references</param>
         /// <returns></returns>
-        public static Task<Assembly> GenerateAssembly(string code)
+        public static Task<Assembly> GenerateAssembly(string code, IEnumerable<MetadataReference> references = null)
         {
             return Task.Run(() =>
             {
                 using (var mem = new MemoryStream())
                 {
-                    var compilation = CreateCompilation(code);
+                    var compilation = CreateCompilation(code, references);
                     var compilationResult = compilation.Emit(mem);
 
                     if (compilationResult.Success)
@@ -40,12 +42,12 @@ namespace Proxier.Managers
             });
         }
 
-        private static CSharpCompilation CreateCompilation(string code)
+        private static CSharpCompilation CreateCompilation(string code, IEnumerable<MetadataReference> references = null)
         {
             var compilation = CSharpCompilation.Create(Nanoid.Nanoid.Generate())
                 .WithOptions(
                     new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .AddReferences(AppDomain.CurrentDomain.GetAssemblies()
+                .AddReferences(references ?? AppDomain.CurrentDomain.GetAssemblies()
                     .Where(i => !i.IsDynamic && !string.IsNullOrEmpty(i.Location))
                     .Distinct().Select(i => MetadataReference.CreateFromFile(i.Location)).OrderBy(i => i.FilePath)
                     .ToList())
