@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using FluentCache;
-using FluentCache.Simple;
 using Proxier.Contexts;
 using Proxier.Repositories;
 
@@ -17,12 +14,8 @@ namespace Proxier.Extensions
     /// </summary>
     public static class TypeExtensions
     {
-        private static Cache<TypeRepository> Cache { get; }
-
-        static TypeExtensions()
-        {
-            Cache = new FluentDictionaryCache().WithSource(new TypeRepository());
-        }
+        
+        
 
         /// <summary>
         ///     Copies object to another object using reflection.
@@ -178,15 +171,13 @@ namespace Proxier.Extensions
 
             var sourceProperties = options.PropertiesToInclude != null && options.PropertiesToInclude.Any()
                 ? options.PropertiesToInclude
-                : Cache.Method(r => r.GetProperty(sourceType, ignorePrivate))
-                    .GetValue();
+                : new TypeRepository().GetProperty(sourceType, ignorePrivate);
 
             var targetType = target.GetType();
 
             var targetProperties = options.PropertiesToInclude != null && options.PropertiesToInclude.Any()
                 ? options.PropertiesToInclude.ToDictionary(i => i.Name)
-                : Cache.Method(r => r.GetProperty(targetType, ignorePrivate))
-                    .GetValue().ToDictionary(i => i.Name);
+                : new TypeRepository().GetProperty(targetType, ignorePrivate).ToDictionary(i => i.Name);
 
             foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore ?? new List<PropertyInfo>())
             )

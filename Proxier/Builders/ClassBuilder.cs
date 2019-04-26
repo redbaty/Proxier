@@ -4,8 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using FluentCache;
-using FluentCache.Simple;
+using Proxier.Extensions;
 using Proxier.Repositories;
 
 namespace Proxier.Builders
@@ -23,6 +22,8 @@ namespace Proxier.Builders
         ///     The additional usings.
         /// </value>
         public List<string> AdditionalUsings { get; } = new List<string>();
+
+        private static Dictionary<string, Assembly> AssembliesCache { get; } = new Dictionary<string, Assembly>();
 
         /// <summary>
         ///     Gets the class name.
@@ -50,14 +51,7 @@ namespace Proxier.Builders
         /// </value>
         public HashSet<PropertyBuilder> PropertyBuilders { get; } = new HashSet<PropertyBuilder>();
 
-        private static Cache<ClassBuilderRepository> Cache { get; }
-
         private bool IsInterface { get; set; }
-
-        static ClassBuilder()
-        {
-            Cache = new FluentDictionaryCache().WithSource(new ClassBuilderRepository());
-        }
 
         /// <summary>
         ///     Use an existing type as model.
@@ -152,8 +146,10 @@ namespace Proxier.Builders
         /// <param name="readOnly">if set to <c>true</c> [read only].</param>
         /// <param name="attributes">The attributes.</param>
         /// <returns></returns>
-        public ClassBuilder WithProperty(string name, Type type, bool readOnly,
-            params Expression<Func<Attribute>>[] attributes)
+        public ClassBuilder WithProperty(string name,
+                                         Type type,
+                                         bool readOnly,
+                                         params Expression<Func<Attribute>>[] attributes)
         {
             PropertyBuilders.Add(new PropertyBuilder(name, type, attributes, readOnly));
             return this;
@@ -221,17 +217,17 @@ namespace Proxier.Builders
         {
             var code = GetAsCode();
 
-            var generateAssembly =
-                Cache.Method(i => i.GenerateAssembly(code)).GetValue();
-
-            return generateAssembly.GetTypes()
+            return AssembliesCache.GetOrAdd(code, () => new ClassBuilderRepository().GenerateAssembly(code)).GetTypes()
                 .LastOrDefault();
         }
 
-        private string BuildClassOrInterface(IEnumerable<string> uniqueUsings, string[] propertiesBuilt,
-            string name, bool asInterface)
+        private string BuildClassOrInterface(IEnumerable<string> uniqueUsings,
+                                             string[] propertiesBuilt,
+                                             string name,
+                                             bool asInterface)
         {
-            var classRepresentationBuilder = new ClassRepresentationBuilder().InheritsFrom(Parents).WithNamespace(Namespace)
+            var classRepresentationBuilder = new ClassRepresentationBuilder().InheritsFrom(Parents)
+                .WithNamespace(Namespace)
                 .WithUsings(AdditionalUsings.ToArray())
                 .WithUsings(uniqueUsings.ToArray())
                 .WithName(name).WithProperties(propertiesBuilt);
