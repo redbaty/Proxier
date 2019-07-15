@@ -4,7 +4,7 @@
   </a>
   <h1>Proxier</h1>
     
-[![GitHub license](https://img.shields.io/github/license/redbaty/Proxier.svg)](https://github.com/redbaty/Proxier/blob/master/LICENSE) [![Twitter](https://img.shields.io/twitter/url/https/github.com/redbaty/Proxier.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fredbaty%2FProxier) [![NuGet](https://img.shields.io/nuget/dt/Proxier.svg)](https://www.nuget.org/packages/Proxier/) [![Build status](https://ci.appveyor.com/api/projects/status/3v3da0um3oy8ul5k?svg=true)](https://ci.appveyor.com/project/redbaty/proxier)
+[![GitHub license](https://img.shields.io/github/license/redbaty/Proxier.svg)](https://github.com/redbaty/Proxier/blob/master/LICENSE) [![Twitter](https://img.shields.io/twitter/url/https/github.com/redbaty/Proxier.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fredbaty%2FProxier) [![NuGet](https://img.shields.io/nuget/dt/Proxier.svg)](https://www.nuget.org/packages/Proxier/)
 </div>
 
 
@@ -17,7 +17,7 @@ Have you ever had to create or modify a class at runtime? With this library you 
 * Deep Clone objects.
 * Add or modify properties and types at runtime.
 *  ℹ️ Semantic extensions, easy to use.
-* 🌎 .NET Core support
+* 🌎 .NET Standard 2.0
 * ⚙️ Fluent engine
 
 ## Code Samples :pencil2:
