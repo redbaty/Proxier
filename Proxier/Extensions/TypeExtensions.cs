@@ -14,20 +14,20 @@ namespace Proxier.Extensions
     /// </summary>
     public static class TypeExtensions
     {
-        
-        
-
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TTarget"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static T DeepClone<T>(this T source)
+        public static IEnumerable<TTarget> ConvertTo<TTarget>(this IEnumerable source)
         {
-            var instance = Activator.CreateInstance<T>();
-            CopyTo(source, instance);
-            return instance;
+            foreach (var src in source)
+            {
+                var instance = Activator.CreateInstance<TTarget>();
+                CopyTo(src, instance, new CopyToOptions());
+                yield return instance;
+            }
         }
 
         /// <summary>
@@ -47,7 +47,6 @@ namespace Proxier.Extensions
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TTarget"></typeparam>
         /// <param name="source">The base class instance.</param>
         /// <returns></returns>
@@ -57,23 +56,6 @@ namespace Proxier.Extensions
             var instance = Activator.CreateInstance<TTarget>();
             CopyTo(source, instance, new CopyToOptions());
             return instance;
-        }
-
-        /// <summary>
-        ///     Copies object to another object using reflection.
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TTarget"></typeparam>
-        /// <param name="source">The base class instance.</param>
-        /// <returns></returns>
-        public static IEnumerable<TTarget> ConvertTo<TTarget>(this IEnumerable source)
-        {
-            foreach (var src in source)
-            {
-                var instance = Activator.CreateInstance<TTarget>();
-                CopyTo(src, instance, new CopyToOptions());
-                yield return instance;
-            }
         }
 
         /// <summary>
@@ -136,26 +118,6 @@ namespace Proxier.Extensions
             });
         }
 
-        private static PropertyInfo ValidateProperty<TSource>(
-            Expression<Func<TSource, object>> propertyLambda)
-        {
-            var type = typeof(TSource);
-
-            if (!(propertyLambda.Body is MemberExpression member))
-                throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
-
-            var propInfo = member.Member as PropertyInfo;
-            if (propInfo == null)
-                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
-
-            if (propInfo.ReflectedType != null && (type != propInfo.ReflectedType &&
-                                                   !type.IsSubclassOf(propInfo.ReflectedType)))
-                throw new ArgumentException(
-                    $"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
-
-            return propInfo;
-        }
-
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
@@ -200,7 +162,7 @@ namespace Proxier.Extensions
                             targetProperty.PropertyType;
 
 
-                        if(!targetProperty.CanWrite)
+                        if (!targetProperty.CanWrite)
                             continue;
 
                         if (trueSourceType == trueTargetType)
@@ -219,49 +181,17 @@ namespace Proxier.Extensions
             }
         }
 
-        private static bool CanConvert(object value, PropertyInfo sourcePropertyInfo, PropertyInfo targetPropertyInfo,
-            out object obj)
-        {
-            obj = value;
-
-            var trueSourceType = Nullable.GetUnderlyingType(sourcePropertyInfo.PropertyType) ??
-                                 sourcePropertyInfo.PropertyType;
-
-            var trueTargetSourceType = Nullable.GetUnderlyingType(targetPropertyInfo.PropertyType) ??
-                                       targetPropertyInfo.PropertyType;
-
-            if (trueSourceType == trueTargetSourceType)
-            {
-                return true;
-            }
-
-            try
-            {
-                var val = Convert.ChangeType(value, trueTargetSourceType);
-                obj = val;
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         /// <summary>
-        ///     Gets if type has a parameterless constructor
+        ///     Copies object to another object using reflection.
         /// </summary>
-        /// <param name="type"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The base class instance.</param>
         /// <returns></returns>
-        public static bool HasParameterlessContructor(this Type type)
+        public static T DeepClone<T>(this T source)
         {
-            try
-            {
-                return type.GetConstructor(Type.EmptyTypes) != null;
-            }
-            catch
-            {
-                return false;
-            }
+            var instance = Activator.CreateInstance<T>();
+            CopyTo(source, instance);
+            return instance;
         }
 
         /// <summary>
@@ -283,6 +213,68 @@ namespace Proxier.Extensions
             }
 
             return returnList;
+        }
+
+        /// <summary>
+        ///     Gets if type has a parameterless constructor
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool HasParameterlessContructor(this Type type)
+        {
+            try
+            {
+                return type.GetConstructor(Type.EmptyTypes) != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool CanConvert(object value, PropertyInfo sourcePropertyInfo, PropertyInfo targetPropertyInfo,
+            out object obj)
+        {
+            obj = value;
+
+            var trueSourceType = Nullable.GetUnderlyingType(sourcePropertyInfo.PropertyType) ??
+                                 sourcePropertyInfo.PropertyType;
+
+            var trueTargetSourceType = Nullable.GetUnderlyingType(targetPropertyInfo.PropertyType) ??
+                                       targetPropertyInfo.PropertyType;
+
+            if (trueSourceType == trueTargetSourceType) return true;
+
+            try
+            {
+                var val = Convert.ChangeType(value, trueTargetSourceType);
+                obj = val;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static PropertyInfo ValidateProperty<TSource>(
+            Expression<Func<TSource, object>> propertyLambda)
+        {
+            var type = typeof(TSource);
+
+            if (!(propertyLambda.Body is MemberExpression member))
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
+
+            var propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+
+            if (propInfo.ReflectedType != null && type != propInfo.ReflectedType &&
+                !type.IsSubclassOf(propInfo.ReflectedType))
+                throw new ArgumentException(
+                    $"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
+
+            return propInfo;
         }
     }
 }

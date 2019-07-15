@@ -1,0 +1,490 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Proxier</name>
+    </assembly>
+    <members>
+        <member name="T:Proxier.Builders.ClassBuilder">
+            <summary>
+                Represents a class builder
+            </summary>
+        </member>
+        <member name="P:Proxier.Builders.ClassBuilder.AdditionalUsings">
+            <summary>
+                Gets the additional usings.
+            </summary>
+            <value>
+                The additional usings.
+            </value>
+        </member>
+        <member name="P:Proxier.Builders.ClassBuilder.Name">
+            <summary>
+                Gets the class name.
+            </summary>
+            <value>
+                The name.
+            </value>
+        </member>
+        <member name="P:Proxier.Builders.ClassBuilder.Namespace">
+            <summary>
+                Gets the namespace.
+            </summary>
+            <value>
+                The namespace.
+            </value>
+        </member>
+        <member name="P:Proxier.Builders.ClassBuilder.PropertyBuilders">
+            <summary>
+                Gets the property builders.
+            </summary>
+            <value>
+                The property builders.
+            </value>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.AsInterface">
+            <summary>
+                Specifies that this class should be a interface instead.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.Build">
+            <summary>
+                Builds this instance into a real type.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.FromType(System.Type)">
+            <summary>
+                Use an existing type as model.
+            </summary>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.GetAsCode">
+            <summary>
+                Gets the result as code instead of an type.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.InheritsFrom(System.String)">
+            <summary>
+                Makes this class inherit from a certain class or interface.
+            </summary>
+            <param name="classOrInterfaceToInherit"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.OnNamespace(System.String)">
+            <summary>
+                Creates the type on a certain namespace.
+            </summary>
+            <param name="nameSpace">The namespace.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.Using(System.String)">
+            <summary>
+                Forcefully add this using into the built class.
+            </summary>
+            <param name="additionalUsing">The additional using.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.Using(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+                Forcefully add these usings into the built class.
+            </summary>
+            <param name="additionalUsings">The additional usings.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.WithName(System.String)">
+            <summary>
+                Sets a class name (Random generated if none is found at build time)
+            </summary>
+            <param name="name">The name.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.WithProperty(System.String,System.Type,System.Boolean)">
+            <summary>
+                Adds a property.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="type">The type.</param>
+            <param name="readOnly">if set to <c>true</c> [read only].</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.WithProperty(System.String,System.Type,System.Boolean,System.Collections.Generic.IEnumerable{System.Attribute})">
+            <summary>
+                Adds a property.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="type">The type.</param>
+            <param name="readOnly">if set to <c>true</c> [read only].</param>
+            <param name="attributes">The attributes.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.WithProperty(System.String,System.Type,System.Boolean,System.Linq.Expressions.Expression{System.Func{System.Attribute}}[])">
+            <summary>
+                Adds a property.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="type">The type.</param>
+            <param name="readOnly">if set to <c>true</c> [read only].</param>
+            <param name="attributes">The attributes.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.WithProperty(Proxier.Builders.PropertyBuilder)">
+            <summary>
+                Adds a property.
+            </summary>
+            <param name="propertyBuilder">The property builder.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.ClassBuilder.WithProperty(System.Collections.Generic.IEnumerable{Proxier.Builders.PropertyBuilder})">
+            <summary>
+                Adds multiple properties.
+            </summary>
+            <param name="propertyBuilders">The property builders.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Proxier.Builders.PropertyBuilder">
+            <summary>
+                Represents a property builder
+            </summary>
+        </member>
+        <member name="P:Proxier.Builders.PropertyBuilder.Attributes">
+            <summary>
+                Attribute expressions.
+            </summary>
+            <value>
+                The expressions.
+            </value>
+        </member>
+        <member name="P:Proxier.Builders.PropertyBuilder.PropertyType">
+            <summary>
+                Gets the type of the property.
+            </summary>
+            <value>
+                The type of the property.
+            </value>
+        </member>
+        <member name="P:Proxier.Builders.PropertyBuilder.CompiledAttributes">
+            <summary>
+                Attributes instances.
+            </summary>
+            <value>
+                The attributes instances.
+            </value>
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.#ctor(System.String,System.Type,System.Collections.Generic.IEnumerable{System.Linq.Expressions.Expression{System.Func{System.Attribute}}},System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.#ctor(System.String,System.Type,System.Collections.Generic.IEnumerable{System.Attribute},System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.AsInterface">
+            <summary>
+                If set this will be treated as an interface.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.Build">
+            <summary>
+                Builds this instance.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.ReadOnly">
+            <summary>
+                Makes the property read only.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.WithAttributes(System.Linq.Expressions.Expression{System.Func{System.Attribute}}[])">
+            <summary>
+                Adds an attributes.
+            </summary>
+            <param name="attributes">The attributes.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.WithName(System.String)">
+            <summary>
+                Sets the property name.
+            </summary>
+            <param name="name">The name.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Builders.PropertyBuilder.WithType(System.Type)">
+            <summary>
+                Sets the propertie's type.
+            </summary>
+            <param name="propertyType">Type of the property.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Proxier.Contexts.CopyContext.Property">
+            <inheritdoc />
+        </member>
+        <member name="P:Proxier.Contexts.CopyContext.Source">
+            <inheritdoc />
+        </member>
+        <member name="P:Proxier.Contexts.CopyContext.Target">
+            <inheritdoc />
+        </member>
+        <member name="T:Proxier.CopyToOptions">
+            <summary>
+                Represents copy options
+            </summary>
+        </member>
+        <member name="P:Proxier.CopyToOptions.CopyPrivates">
+            <summary>
+                If set, the copier will include non public properties.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Proxier.CopyToOptions.IgnoreNulls">
+            <summary>
+                If set this will not copy null values.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Proxier.CopyToOptions.PropertiesToIgnore">
+            <summary>
+                These properties will be ignored when copying.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Proxier.CopyToOptions.PropertiesToInclude">
+            <summary>
+                If set only these properties will be used when copying objects.
+            </summary>
+        </member>
+        <member name="P:Proxier.CopyToOptions.Resolver">
+            <summary>
+                This will be used to get the value that will be set to a certain property.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Proxier.CopyToOptions.TryToConvert">
+            <summary>
+                If set and the properties between the two objects are different
+                the copier will try to convert it to the target type.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Proxier.CopyToOptions.UseNullableBaseType">
+            <summary>
+                If set the copier will compare the base type from nullable types
+            </summary>
+        </member>
+        <member name="T:Proxier.Exceptions.CompilationError">
+            <inheritdoc />
+            <summary>
+                Represents an error during compilation
+            </summary>
+            <seealso cref="T:System.Exception" />
+        </member>
+        <member name="P:Proxier.Exceptions.CompilationError.Diagnostic">
+            <summary>
+                Gets the diagnostic information.
+            </summary>
+            <value>
+                The diagnostic.
+            </value>
+        </member>
+        <member name="P:Proxier.Exceptions.CompilationError.Message">
+            <summary>
+                Gets a message that describes the current exception.
+            </summary>
+        </member>
+        <member name="M:Proxier.Exceptions.CompilationError.#ctor(Microsoft.CodeAnalysis.Diagnostic,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="T:Proxier.Extensions.AssemblyExtensions">
+            <summary>
+                Assembly extensions
+            </summary>
+        </member>
+        <member name="M:Proxier.Extensions.AssemblyExtensions.GetLoadableTypes(System.Reflection.Assembly)">
+            <summary>
+                Get all loadable types
+            </summary>
+            <param name="assembly"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:Proxier.Extensions.PropertyInfoExtensions">
+            <summary>
+                Property info extensions
+            </summary>
+        </member>
+        <member name="M:Proxier.Extensions.PropertyInfoExtensions.GetHighestProperty(System.Type,System.String)">
+            <summary>
+                Get the last property from a type based on a name.
+            </summary>
+            <param name="type"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.PropertyInfoExtensions.GetHighestPropertyValue(System.Object,System.String)">
+            <summary>
+                Gets the highest property value.
+            </summary>
+            <param name="obj">The object.</param>
+            <param name="property">The property.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Proxier.Extensions.TypeExtensions">
+            <summary>
+                General Extensions
+            </summary>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.ConvertTo``1(System.Collections.IEnumerable)">
+            <summary>
+                Copies object to another object using reflection.
+            </summary>
+            <typeparam name="TTarget"></typeparam>
+            <param name="source">The base class instance.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.CopyTo``1(``0,System.Type)">
+            <summary>
+                Copies object to another object using reflection.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="source">The base class instance.</param>
+            <param name="newInstanceType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.CopyTo``1(System.Object)">
+            <summary>
+                Copies object to another object using reflection.
+            </summary>
+            <typeparam name="TTarget"></typeparam>
+            <param name="source">The base class instance.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.CopyTo``1(``0,System.Object)">
+            <summary>
+                Copies object to another object using reflection.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="source">The base class instance.</param>
+            <param name="target">The target.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.CopyTo``2(``0,``1)">
+            <summary>
+                Copies object to another object using reflection.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <typeparam name="TTarget"></typeparam>
+            <param name="source">The base class instance.</param>
+            <param name="target">The target.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.CopyTo``1(``0,System.Object,System.String[])">
+            <summary>
+                Copies object to another object ignoring some properties.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="source">The base class instance.</param>
+            <param name="target">The target.</param>
+            <param name="propertiesToIgnore"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.CopyTo``1(``0,System.Object,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+                Copies object to another object ignoring some properties.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="source">The base class instance.</param>
+            <param name="target">The target.</param>
+            <param name="propertiesToIgnore"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.CopyTo(System.Object,System.Object,Proxier.CopyToOptions)">
+            <summary>
+                Copies object to another object using reflection.
+            </summary>
+            <param name="source">The base class instance.</param>
+            <param name="target">The target.</param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.DeepClone``1(``0)">
+            <summary>
+                Copies object to another object using reflection.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source">The base class instance.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.GetAllBaseTypes(System.Type)">
+            <summary>
+                Gets all base types.
+            </summary>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Proxier.Extensions.TypeExtensions.HasParameterlessContructor(System.Type)">
+            <summary>
+                Gets if type has a parameterless constructor
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Proxier.Interfaces.ICopyContext">
+            <summary>
+                Copy context
+            </summary>
+        </member>
+        <member name="P:Proxier.Interfaces.ICopyContext.Property">
+            <summary>
+                Gets the property.
+            </summary>
+            <value>
+                The property.
+            </value>
+        </member>
+        <member name="P:Proxier.Interfaces.ICopyContext.Source">
+            <summary>
+                Gets the source.
+            </summary>
+            <value>
+                The source.
+            </value>
+        </member>
+        <member name="P:Proxier.Interfaces.ICopyContext.Target">
+            <summary>
+                Gets the target.
+            </summary>
+            <value>
+                The target.
+            </value>
+        </member>
+        <member name="T:Proxier.Managers.CodeManager">
+            <summary>
+                Creates assemblies from code string.
+            </summary>
+        </member>
+        <member name="M:Proxier.Managers.CodeManager.GenerateAssembly(System.String,System.Collections.Generic.IEnumerable{Microsoft.CodeAnalysis.MetadataReference})">
+            <summary>
+                Generates an assembly from code.
+            </summary>
+            <param name="code">The code.</param>
+            <param name="references">Assembly references</param>
+            <returns></returns>
+        </member>
+        <member name="T:Proxier.Representations.PropertyRepresentation">
+            <summary>
+                This is a property's representation
+            </summary>
+        </member>
+        <member name="M:Proxier.Representations.PropertyRepresentation.#ctor(System.String,System.Type,System.Boolean,System.Collections.Generic.IEnumerable{System.Linq.Expressions.Expression{System.Func{System.Attribute}}},System.Collections.Generic.IEnumerable{System.Attribute},System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:Proxier.Representations.PropertyRepresentation.ToString">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

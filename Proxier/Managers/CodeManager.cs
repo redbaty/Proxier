@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,10 @@ using Proxier.Exceptions;
 
 namespace Proxier.Managers
 {
+    /// <summary>
+    ///     Creates assemblies from code string.
+    /// </summary>
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class CodeManager
     {
         /// <summary>
@@ -42,15 +47,17 @@ namespace Proxier.Managers
             });
         }
 
-        private static CSharpCompilation CreateCompilation(string code, IEnumerable<MetadataReference> references = null)
+        private static CSharpCompilation CreateCompilation(string code,
+            IEnumerable<MetadataReference> references = null)
         {
             var compilation = CSharpCompilation.Create(Nanoid.Nanoid.Generate())
                 .WithOptions(
                     new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
                 .AddReferences(references ?? AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(i => !i.IsDynamic && !string.IsNullOrEmpty(i.Location))
-                    .Distinct().Select(i => MetadataReference.CreateFromFile(i.Location)).OrderBy(i => i.FilePath)
-                    .ToList())
+                                   .Where(i => !i.IsDynamic && !string.IsNullOrEmpty(i.Location))
+                                   .Distinct().Select(i => MetadataReference.CreateFromFile(i.Location))
+                                   .OrderBy(i => i.FilePath)
+                                   .ToList())
                 .AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(code));
             return compilation;
         }

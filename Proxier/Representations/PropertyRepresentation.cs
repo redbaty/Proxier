@@ -73,6 +73,18 @@ namespace Proxier.Representations
             return stringBuilder.ToString();
         }
 
+        private static string GetRealName(Type type)
+        {
+            if (type.IsGenericType && Nullable.GetUnderlyingType(type) == null)
+            {
+                var resolvedTypeName =
+                    $"{type.Name.Substring(0, type.Name.IndexOf("`", StringComparison.Ordinal))}<{type.GetGenericArguments().Select(GetRealName).Aggregate((x, y) => $"{x}, {y}")}>";
+                return resolvedTypeName;
+            }
+
+            return type.Name;
+        }
+
         private string GetResolvedTypeName(Type type)
         {
             var isNullable = false;
@@ -90,18 +102,6 @@ namespace Proxier.Representations
 
                 return type.Name + (isNullable ? "?" : "");
             }
-        }
-
-        private static string GetRealName(Type type)
-        {
-            if (type.IsGenericType && Nullable.GetUnderlyingType(type) == null)
-            {
-                var resolvedTypeName =
-                    $"{type.Name.Substring(0, type.Name.IndexOf("`", StringComparison.Ordinal))}<{type.GetGenericArguments().Select(GetRealName).Aggregate((x, y) => $"{x}, {y}")}>";
-                return resolvedTypeName;
-            }
-
-            return type.Name;
         }
     }
 }

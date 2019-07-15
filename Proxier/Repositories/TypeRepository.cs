@@ -8,10 +8,12 @@ namespace Proxier.Repositories
     {
         public PropertyInfo[] GetProperty(Type type, bool ignorePrivate)
         {
-            var propertyInfos = ignorePrivate ? type.GetProperties(BindingFlags.Public | BindingFlags.Instance) : type
-                .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var propertyInfos = ignorePrivate
+                ? type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                : type
+                    .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             return propertyInfos.Where(
-                        i => i.CanRead && i.CanWrite).ToArray();
+                i => i.CanRead && i.CanWrite).ToArray();
         }
     }
 }

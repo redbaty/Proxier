@@ -5,7 +5,8 @@ namespace Proxier.Extensions
 {
     internal static class DictionaryExtensions
     {
-        public static TItem GetOrAdd<TKey, TItem>(this Dictionary<TKey, TItem> dictionary, TKey key, Func<TItem> factory)
+        public static TItem GetOrAdd<TKey, TItem>(this Dictionary<TKey, TItem> dictionary, TKey key,
+            Func<TItem> factory)
         {
             if (dictionary.ContainsKey(key))
                 return dictionary[key];

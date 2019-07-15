@@ -1,15 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>Proxier</id>
-        <version>$version$</version>
-        <title>A class proxier</title>
-        <authors>Marcos Maia</authors>
-        <owners>Marcos Maia</owners>
-        <licenseUrl>https://github.com/redbaty/Proxier/blob/master/License.md</licenseUrl>
-        <projectUrl>https://github.com/redbaty/Proxier</projectUrl>
-        <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <description>Creates and inject attributes and properties to existing types in runtime</description>
-        <tags>Material Design Form Dialog WPF XAML</tags>
-    </metadata>
+  <metadata>
+    <id>Proxier</id>
+    <version>$version$</version>
+    <title>A class proxier</title>
+    <authors>Marcos Maia</authors>
+    <owners>Marcos Maia</owners>
+    <licenseUrl>https://github.com/redbaty/Proxier/blob/master/License.md</licenseUrl>
+    <projectUrl>https://github.com/redbaty/Proxier</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Creates and inject attributes and properties to existing types in runtime</description>
+    <tags>Material Design Form Dialog WPF XAML</tags>
+  </metadata>
 </package>

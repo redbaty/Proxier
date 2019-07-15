@@ -65,6 +65,36 @@ namespace Proxier.Builders
         }
 
         /// <summary>
+        ///     If set this will be treated as an interface.
+        /// </summary>
+        /// <returns></returns>
+        public PropertyBuilder AsInterface()
+        {
+            IsInterface = true;
+            return this;
+        }
+
+        /// <summary>
+        ///     Builds this instance.
+        /// </summary>
+        /// <returns></returns>
+        public PropertyRepresentation Build()
+        {
+            return new PropertyRepresentation(Name, PropertyType, IsReadOnly, Attributes, CompiledAttributes,
+                IsInterface);
+        }
+
+        /// <summary>
+        ///     Makes the property read only.
+        /// </summary>
+        /// <returns></returns>
+        public PropertyBuilder ReadOnly()
+        {
+            IsReadOnly = true;
+            return this;
+        }
+
+        /// <summary>
         ///     Adds an attributes.
         /// </summary>
         /// <param name="attributes">The attributes.</param>
@@ -95,32 +125,6 @@ namespace Proxier.Builders
         {
             PropertyType = propertyType;
             return this;
-        }
-
-        public PropertyBuilder AsInterface()
-        {
-            IsInterface = true;
-            return this;
-        }
-
-        /// <summary>
-        ///     Makes the property read only.
-        /// </summary>
-        /// <returns></returns>
-        public PropertyBuilder ReadOnly()
-        {
-            IsReadOnly = true;
-            return this;
-        }
-
-        /// <summary>
-        ///     Builds this instance.
-        /// </summary>
-        /// <returns></returns>
-        public PropertyRepresentation Build()
-        {
-            return new PropertyRepresentation(Name, PropertyType, IsReadOnly, Attributes, CompiledAttributes,
-                IsInterface);
         }
     }
 }

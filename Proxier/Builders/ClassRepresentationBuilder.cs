@@ -17,18 +17,26 @@ namespace Proxier.Builders
 
         private string Namespace { get; set; }
 
+        private List<string> Parents { get; } = new List<string>();
+
         private List<string> Properties { get; } = new List<string>();
 
         private string Representation { get; set; } = "";
 
         private List<string> Usings { get; } = new List<string> {"System"};
 
-        private List<string> Parents { get; } = new List<string>();
-
-        public ClassRepresentationBuilder WithNamespace(string nameSpace)
+        public ClassRepresentationBuilder AsInterface()
         {
-            Namespace = nameSpace;
+            IsInterface = true;
             return this;
+        }
+
+        public string Build()
+        {
+            AddClassHeader();
+            AddProperties();
+            AddFooter();
+            return CSharpSyntaxTree.ParseText(Representation).GetRoot().NormalizeWhitespace().ToFullString();
         }
 
         public ClassRepresentationBuilder InheritsFrom(string toInherit)
@@ -41,61 +49,6 @@ namespace Proxier.Builders
         {
             Parents.AddRange(toInherit);
             return this;
-        }
-
-        public ClassRepresentationBuilder AsInterface()
-        {
-            IsInterface = true;
-            return this;
-        }
-
-        private void AddClassHeader()
-        {
-            foreach (var @using in Usings.Distinct()) WriteLine($"using {@using};");
-
-            WriteLine("");
-
-            if (!string.IsNullOrEmpty(Namespace)) AddNameSpace();
-
-            AddClassAttributes();
-            WriteLine($"public {(IsInterface ? "interface" : "class")} {ClassName}{ResolveInheritance()} {{");
-        }
-
-        private string ResolveInheritance()
-        {
-            if (Parents.Any())
-            {
-                return $" : {(Parents.Distinct().OrderBy(i => i).Aggregate((x, y) => $"{x}, {y}"))}";
-            }
-
-            return string.Empty;
-        }
-
-        private void AddNameSpace()
-        {
-            WriteLine($"namespace {Namespace}\n{{");
-        }
-
-        private void AddClassAttributes()
-        {
-            foreach (var classAttribute in ClassAttributes) WriteLine(classAttribute);
-        }
-
-        private void AddProperties()
-        {
-            Representation += Properties.Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
-        }
-
-        private void AddFooter()
-        {
-            WriteLine("}");
-
-            if (!string.IsNullOrEmpty(Namespace)) WriteLine("}");
-        }
-
-        private void WriteLine(string toWrite)
-        {
-            Representation += toWrite + Environment.NewLine;
         }
 
         public ClassRepresentationBuilder WithClassAttributes(params string[] classAttributes)
@@ -111,6 +64,12 @@ namespace Proxier.Builders
             return this;
         }
 
+        public ClassRepresentationBuilder WithNamespace(string nameSpace)
+        {
+            Namespace = nameSpace;
+            return this;
+        }
+
         public ClassRepresentationBuilder WithProperties(params string[] properties)
         {
             Properties.AddRange(properties);
@@ -123,12 +82,50 @@ namespace Proxier.Builders
             return this;
         }
 
-        public string Build()
+        private void AddClassAttributes()
         {
-            AddClassHeader();
-            AddProperties();
-            AddFooter();
-            return CSharpSyntaxTree.ParseText(Representation).GetRoot().NormalizeWhitespace().ToFullString();
+            foreach (var classAttribute in ClassAttributes) WriteLine(classAttribute);
+        }
+
+        private void AddClassHeader()
+        {
+            foreach (var @using in Usings.Distinct()) WriteLine($"using {@using};");
+
+            WriteLine("");
+
+            if (!string.IsNullOrEmpty(Namespace)) AddNameSpace();
+
+            AddClassAttributes();
+            WriteLine($"public {(IsInterface ? "interface" : "class")} {ClassName}{ResolveInheritance()} {{");
+        }
+
+        private void AddFooter()
+        {
+            WriteLine("}");
+
+            if (!string.IsNullOrEmpty(Namespace)) WriteLine("}");
+        }
+
+        private void AddNameSpace()
+        {
+            WriteLine($"namespace {Namespace}\n{{");
+        }
+
+        private void AddProperties()
+        {
+            Representation += Properties.Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
+        }
+
+        private string ResolveInheritance()
+        {
+            if (Parents.Any()) return $" : {Parents.Distinct().OrderBy(i => i).Aggregate((x, y) => $"{x}, {y}")}";
+
+            return string.Empty;
+        }
+
+        private void WriteLine(string toWrite)
+        {
+            Representation += toWrite + Environment.NewLine;
         }
     }
 }

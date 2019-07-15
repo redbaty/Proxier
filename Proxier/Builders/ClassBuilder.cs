@@ -23,8 +23,6 @@ namespace Proxier.Builders
         /// </value>
         public List<string> AdditionalUsings { get; } = new List<string>();
 
-        private static Dictionary<string, Assembly> AssembliesCache { get; } = new Dictionary<string, Assembly>();
-
         /// <summary>
         ///     Gets the class name.
         /// </summary>
@@ -41,8 +39,6 @@ namespace Proxier.Builders
         /// </value>
         public string Namespace { get; private set; }
 
-        private List<string> Parents { get; } = new List<string>();
-
         /// <summary>
         ///     Gets the property builders.
         /// </summary>
@@ -51,7 +47,33 @@ namespace Proxier.Builders
         /// </value>
         public HashSet<PropertyBuilder> PropertyBuilders { get; } = new HashSet<PropertyBuilder>();
 
+        private static Dictionary<string, Assembly> AssembliesCache { get; } = new Dictionary<string, Assembly>();
+
         private bool IsInterface { get; set; }
+
+        private List<string> Parents { get; } = new List<string>();
+
+        /// <summary>
+        ///     Specifies that this class should be a interface instead.
+        /// </summary>
+        /// <returns></returns>
+        public ClassBuilder AsInterface()
+        {
+            IsInterface = true;
+            return this;
+        }
+
+        /// <summary>
+        ///     Builds this instance into a real type.
+        /// </summary>
+        /// <returns></returns>
+        public Type Build()
+        {
+            var code = GetAsCode();
+
+            return AssembliesCache.GetOrAdd(code, () => new ClassBuilderRepository().GenerateAssembly(code)).GetTypes()
+                .LastOrDefault();
+        }
 
         /// <summary>
         ///     Use an existing type as model.
@@ -64,6 +86,49 @@ namespace Proxier.Builders
                 WithProperty(propertyInfo.Name, propertyInfo.PropertyType, !propertyInfo.CanWrite,
                     propertyInfo.GetCustomAttributes<Attribute>().ToArray());
 
+            return this;
+        }
+
+        /// <summary>
+        ///     Gets the result as code instead of an type.
+        /// </summary>
+        /// <returns></returns>
+        public string GetAsCode()
+        {
+            var propertiesBuilt = PropertyBuilders.Select(i =>
+            {
+                if (IsInterface)
+                    i.AsInterface();
+
+                return i.Build().ToString();
+            }).ToArray();
+            var typesInUse = PropertyBuilders.Select(i => i.PropertyType).Concat(PropertyBuilders
+                .Where(i => i.Attributes != null)
+                .SelectMany(o => o.Attributes.Select(j => j.Compile().Invoke().GetType())));
+            var uniqueUsings = typesInUse.Select(o => o.Namespace).Distinct();
+
+            return BuildClassOrInterface(uniqueUsings, propertiesBuilt, Name, IsInterface);
+        }
+
+        /// <summary>
+        ///     Makes this class inherit from a certain class or interface.
+        /// </summary>
+        /// <param name="classOrInterfaceToInherit"></param>
+        /// <returns></returns>
+        public ClassBuilder InheritsFrom(string classOrInterfaceToInherit)
+        {
+            Parents.Add(classOrInterfaceToInherit);
+            return this;
+        }
+
+        /// <summary>
+        ///     Creates the type on a certain namespace.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <returns></returns>
+        public ClassBuilder OnNamespace(string nameSpace)
+        {
+            Namespace = nameSpace;
             return this;
         }
 
@@ -86,17 +151,6 @@ namespace Proxier.Builders
         public ClassBuilder Using(IEnumerable<string> additionalUsings)
         {
             AdditionalUsings.AddRange(additionalUsings);
-            return this;
-        }
-
-        /// <summary>
-        ///     Creates the type on a certain namespace.
-        /// </summary>
-        /// <param name="nameSpace">The namespace.</param>
-        /// <returns></returns>
-        public ClassBuilder OnNamespace(string nameSpace)
-        {
-            Namespace = nameSpace;
             return this;
         }
 
@@ -147,9 +201,9 @@ namespace Proxier.Builders
         /// <param name="attributes">The attributes.</param>
         /// <returns></returns>
         public ClassBuilder WithProperty(string name,
-                                         Type type,
-                                         bool readOnly,
-                                         params Expression<Func<Attribute>>[] attributes)
+            Type type,
+            bool readOnly,
+            params Expression<Func<Attribute>>[] attributes)
         {
             PropertyBuilders.Add(new PropertyBuilder(name, type, attributes, readOnly));
             return this;
@@ -178,53 +232,10 @@ namespace Proxier.Builders
             return this;
         }
 
-        /// <summary>
-        ///     Specifies that this class should be a interface instead.
-        /// </summary>
-        /// <returns></returns>
-        public ClassBuilder AsInterface()
-        {
-            IsInterface = true;
-            return this;
-        }
-
-        /// <summary>
-        ///     Gets the result as code instead of an type.
-        /// </summary>
-        /// <returns></returns>
-        public string GetAsCode()
-        {
-            var propertiesBuilt = PropertyBuilders.Select(i =>
-            {
-                if (IsInterface)
-                    i.AsInterface();
-
-                return i.Build().ToString();
-            }).ToArray();
-            var typesInUse = PropertyBuilders.Select(i => i.PropertyType).Concat(PropertyBuilders
-                .Where(i => i.Attributes != null)
-                .SelectMany(o => o.Attributes.Select(j => j.Compile().Invoke().GetType())));
-            var uniqueUsings = typesInUse.Select(o => o.Namespace).Distinct();
-
-            return BuildClassOrInterface(uniqueUsings, propertiesBuilt, Name, IsInterface);
-        }
-
-        /// <summary>
-        ///     Builds this instance into a real type.
-        /// </summary>
-        /// <returns></returns>
-        public Type Build()
-        {
-            var code = GetAsCode();
-
-            return AssembliesCache.GetOrAdd(code, () => new ClassBuilderRepository().GenerateAssembly(code)).GetTypes()
-                .LastOrDefault();
-        }
-
         private string BuildClassOrInterface(IEnumerable<string> uniqueUsings,
-                                             string[] propertiesBuilt,
-                                             string name,
-                                             bool asInterface)
+            string[] propertiesBuilt,
+            string name,
+            bool asInterface)
         {
             var classRepresentationBuilder = new ClassRepresentationBuilder().InheritsFrom(Parents)
                 .WithNamespace(Namespace)
@@ -237,17 +248,6 @@ namespace Proxier.Builders
 
             var classResult = classRepresentationBuilder.Build();
             return classResult;
-        }
-
-        /// <summary>
-        ///     Makes this class inherit from a certain class or interface.
-        /// </summary>
-        /// <param name="classOrInterfaceToInherit"></param>
-        /// <returns></returns>
-        public ClassBuilder InheritsFrom(string classOrInterfaceToInherit)
-        {
-            Parents.Add(classOrInterfaceToInherit);
-            return this;
         }
     }
 }
