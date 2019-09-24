@@ -9,6 +9,20 @@ using Proxier.Repositories;
 
 namespace Proxier.Extensions
 {
+    public static class CollectionExtensions
+    {
+        public static ICollection CastToCollectionType(this IEnumerable mopModels, params Type[] collectionType) =>
+                (ICollection) Activator.CreateInstance(
+                        typeof(List<>).MakeGenericType(collectionType),
+                        typeof(Enumerable).GetMethod("Cast")
+                                          ?.MakeGenericMethod(collectionType)
+                                          .Invoke(null,
+                                                  new object[]
+                                                  {
+                                                          mopModels
+                                                  }));
+    }
+
     /// <summary>
     ///     General Extensions
     /// </summary>
@@ -128,7 +142,7 @@ namespace Proxier.Extensions
         public static void CopyTo(this object source, object target, CopyToOptions options)
         {
             var sourceType = source.GetType();
-
+            
             var ignorePrivate = !options.CopyPrivates;
 
             var sourceProperties = options.PropertiesToInclude != null && options.PropertiesToInclude.Any()
@@ -148,6 +162,22 @@ namespace Proxier.Extensions
 
                 if (options.IgnoreNulls && value == null)
                     continue;
+
+                if (value is IEnumerable enumerable && propertyInfo.PropertyType.IsGenericType)
+                {
+                    var types = propertyInfo.PropertyType.GetGenericArguments();
+                    value = enumerable.Cast<object>()
+                                      .Select(i =>
+                                      {
+                                          var deepClone = DeepCloneObject(i);
+                                          return deepClone;
+                                      })
+                                      .CastToCollectionType(types);
+                }
+                else
+                {
+                    value = DeepCloneObject(value);
+                }
 
                 if (targetProperties.ContainsKey(propertyInfo.Name))
                 {
@@ -189,7 +219,33 @@ namespace Proxier.Extensions
         /// <returns></returns>
         public static T DeepClone<T>(this T source)
         {
-            var instance = Activator.CreateInstance<T>();
+            return (T) DeepCloneObject(source);
+        }
+        
+        private static bool IsSimpleType(Type type)
+        {
+            return
+                    type.IsPrimitive ||
+                    new Type[] {
+                            typeof(Enum),
+                            typeof(String),
+                            typeof(Decimal),
+                            typeof(DateTime),
+                            typeof(DateTimeOffset),
+                            typeof(TimeSpan),
+                            typeof(Guid)
+                    }.Contains(type) ||
+                    Convert.GetTypeCode(type) != TypeCode.Object ||
+                    (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) && IsSimpleType(type.GetGenericArguments()[0]))
+                    ;
+        }
+        
+        private static object DeepCloneObject(this object source)
+        {
+            var sourceType = source?.GetType();
+            if (source == null || IsSimpleType(sourceType)) return source;
+            
+            var instance = Activator.CreateInstance(sourceType);
             CopyTo(source, instance);
             return instance;
         }

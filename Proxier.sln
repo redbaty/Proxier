@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxier", "Proxier\Proxier.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxier.Benchmark", "Proxier.Benchmark\Proxier.Benchmark.csproj", "{3C95565D-740A-4FE9-967D-8F2C85BFD55F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proxier.Tests", "Proxier.Tests\Proxier.Tests.csproj", "{CCEC353A-2EE1-4D73-9037-079B9AB57B4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3C95565D-740A-4FE9-967D-8F2C85BFD55F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C95565D-740A-4FE9-967D-8F2C85BFD55F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C95565D-740A-4FE9-967D-8F2C85BFD55F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCEC353A-2EE1-4D73-9037-079B9AB57B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCEC353A-2EE1-4D73-9037-079B9AB57B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCEC353A-2EE1-4D73-9037-079B9AB57B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCEC353A-2EE1-4D73-9037-079B9AB57B4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
