@@ -46,11 +46,12 @@ namespace Proxier.Tests
                     Property1 = new SimpleTestObject {Property1 = "hey", Property2 = 0},
                     Property2 = new List<SimpleTestObject>
                     {
-                            new SimpleTestObject {Property1 = "o", Property2 = 1},
+                            new SimpleTestObject {Property1 = "y", Property2 = 1},
                             new SimpleTestObject {Property1 = "h", Property2 = 3},
                             new SimpleTestObject {Property1 = "a", Property2 = 2}
                     }
             };
+            
             var clonedObject = originalObject.DeepClone();
             clonedObject.Property2.AddRange(new[]
             {
@@ -59,6 +60,8 @@ namespace Proxier.Tests
             });
             clonedObject.Property1.Property1 = "nope";
             clonedObject.Property1.Property2 = 1;
+            clonedObject.Property2[0]
+                        .Property1 = "o";
             
             Assert.AreNotEqual(originalObject.Property2.Count, clonedObject.Property2.Count);
             Assert.AreNotEqual(originalObject.Property1.Property1, clonedObject.Property1.Property1);
