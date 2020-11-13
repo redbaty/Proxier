@@ -23,6 +23,11 @@ namespace Proxier
         public bool IgnoreNulls { get; set; }
 
         /// <summary>
+        ///     If set all the values gathered from the source object will be deep cloned before copying.
+        /// </summary>
+        public bool DeepCloneValue { get; set; } = true;
+
+        /// <summary>
         ///     These properties will be ignored when copying.
         /// </summary>
         /// <returns></returns>

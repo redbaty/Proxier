@@ -14,6 +14,8 @@ namespace Proxier.Extensions
     /// </summary>
     public static class TypeExtensions
     {
+        private static readonly TypeRepository TypeRepository = new TypeRepository();
+
         /// <summary>
         ///     Copies object to another object using reflection.
         /// </summary>
@@ -133,50 +135,50 @@ namespace Proxier.Extensions
 
             var sourceProperties = options.PropertiesToInclude != null && options.PropertiesToInclude.Any()
                 ? options.PropertiesToInclude
-                : new TypeRepository().GetProperty(sourceType, ignorePrivate);
+                : TypeRepository.GetProperty(sourceType, ignorePrivate);
 
             var targetType = target.GetType();
 
             var targetProperties = options.PropertiesToInclude != null && options.PropertiesToInclude.Any()
                 ? options.PropertiesToInclude.ToDictionary(i => i.Name)
-                : new TypeRepository().GetProperty(targetType, ignorePrivate).ToDictionary(i => i.Name);
+                : TypeRepository.GetProperty(targetType, ignorePrivate).ToDictionary(i => i.Name);
 
-            foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore ?? new List<PropertyInfo>())
+            foreach (var propertyInfo in sourceProperties.Except(options.PropertiesToIgnore ?? Enumerable.Empty<PropertyInfo>())
             )
             {
-                var value = DeepCloneObject(options.Resolver.Invoke(new CopyContext(propertyInfo, source, target)));
+                if (!targetProperties.ContainsKey(propertyInfo.Name)) continue;
+                
+                var copyContext = new CopyContext(propertyInfo, source, target);
+                var rawValue = options.Resolver.Invoke(copyContext);
+                var value = options.DeepCloneValue ? DeepCloneObject(rawValue) : rawValue;
 
                 if (options.IgnoreNulls && value == null)
                     continue;
                 
-                if (targetProperties.ContainsKey(propertyInfo.Name))
+                var targetProperty = targetProperties[propertyInfo.Name];
+
+                if (options.UseNullableBaseType)
                 {
-                    var targetProperty = targetProperties[propertyInfo.Name];
+                    var trueSourceType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ??
+                                         propertyInfo.PropertyType;
+                    var trueTargetType =
+                        Nullable.GetUnderlyingType(targetProperty.PropertyType) ??
+                        targetProperty.PropertyType;
+                    
+                    if (!targetProperty.CanWrite)
+                        continue;
 
-                    if (options.UseNullableBaseType)
-                    {
-                        var trueSourceType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ??
-                                             propertyInfo.PropertyType;
-                        var trueTargetType =
-                            Nullable.GetUnderlyingType(targetProperty.PropertyType) ??
-                            targetProperty.PropertyType;
-
-
-                        if (!targetProperty.CanWrite)
-                            continue;
-
-                        if (trueSourceType == trueTargetType)
-                            targetProperty.SetValue(target, value);
-                        else if (options.TryToConvert && CanConvert(value, propertyInfo, targetProperty, out var x))
-                            targetProperty.SetValue(target, x);
-                    }
-                    else
-                    {
-                        if (propertyInfo.PropertyType == targetProperty.PropertyType)
-                            targetProperty.SetValue(target, value);
-                        else if (options.TryToConvert && CanConvert(value, propertyInfo, targetProperty, out var x))
-                            targetProperty.SetValue(target, x);
-                    }
+                    if (trueSourceType == trueTargetType)
+                        targetProperty.SetValue(target, value);
+                    else if (options.TryToConvert && CanConvert(value, propertyInfo, targetProperty, out var x))
+                        targetProperty.SetValue(target, x);
+                }
+                else
+                {
+                    if (propertyInfo.PropertyType == targetProperty.PropertyType)
+                        targetProperty.SetValue(target, value);
+                    else if (options.TryToConvert && CanConvert(value, propertyInfo, targetProperty, out var x))
+                        targetProperty.SetValue(target, x);
                 }
             }
         }
@@ -196,7 +198,7 @@ namespace Proxier.Extensions
         {
             return
                     type.IsPrimitive ||
-                    new Type[] {
+                    new[] {
                             typeof(Enum),
                             typeof(String),
                             typeof(Decimal),
@@ -244,7 +246,7 @@ namespace Proxier.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static bool HasParameterlessContructor(this Type type)
+        public static bool HasParameterlessConstructor(this Type type)
         {
             try
             {

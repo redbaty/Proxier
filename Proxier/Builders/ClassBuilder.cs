@@ -15,6 +15,8 @@ namespace Proxier.Builders
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ClassBuilder
     {
+        private static readonly ClassBuilderRepository ClassBuilderRepository = new ClassBuilderRepository();
+
         /// <summary>
         ///     Gets the additional usings.
         /// </summary>
@@ -71,7 +73,7 @@ namespace Proxier.Builders
         {
             var code = GetAsCode();
 
-            return AssembliesCache.GetOrAdd(code, () => new ClassBuilderRepository().GenerateAssembly(code)).GetTypes()
+            return AssembliesCache.GetOrAdd(code, () => ClassBuilderRepository.GenerateAssembly(code)).GetTypes()
                 .LastOrDefault();
         }
 
